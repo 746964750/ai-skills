@@ -1,0 +1,5 @@
+{
+  "target_terms": ["支付服务", "Payment Service", "支付中心"],
+  "alias_terms": ["支付平台", "清算服务", "收银台"],
+  "boundary_terms": ["ERP", "账务系统", "风控", "网关", "渠道", "上游系统", "下游系统"]
+}
