@@ -1,0 +1,4 @@
+interface:
+  display_name: "Requirement Extractor"
+  short_description: "Extract functions for a declared target subject and flag scope ambiguities"
+  default_prompt: "Use $requirement-extractor to produce a source-traceable function list for the declared target subject and prominently flag vague or responsibility-ambiguous passages."
