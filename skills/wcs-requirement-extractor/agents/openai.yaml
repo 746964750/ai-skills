@@ -1,0 +1,4 @@
+interface:
+  display_name: "WCS Requirement Extractor"
+  short_description: "Extract WCS functions and highlight scope ambiguities"
+  default_prompt: "Use $wcs-requirement-extractor to produce a source-traceable WCS function list and prominently flag vague or responsibility-ambiguous WCS passages."
