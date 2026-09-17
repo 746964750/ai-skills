@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN" "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<!-- 合并到项目当前兼容版本；800/100 是规范示例，需确认后采用。不要替换原 Checkstyle 配置。 -->
+<module name="Checker">
+  <module name="FileLength"><property name="max" value="800"/></module>
+  <module name="TreeWalker">
+    <module name="MethodLength"><property name="max" value="100"/></module>
+    <module name="RegexpSinglelineJava">
+      <property name="format" value="System\.(out|err)\.(print|println|printf)\s*\("/>
+      <property name="ignoreComments" value="true"/>
+      <property name="message" value="使用项目结构化日志，不提交调试输出"/>
+    </module>
+  </module>
+</module>

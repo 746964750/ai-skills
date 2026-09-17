@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "stack": "frontend",
+  "source_roots": [
+    "src"
+  ],
+  "exclude": [
+    "**/node_modules/**",
+    "**/target/**",
+    "**/dist/**",
+    "**/build/**",
+    ".git/**"
+  ],
+  "owner": {
+    "name": "",
+    "wechat": "",
+    "account": ""
+  },
+  "architecture": {
+    "rules": [
+      {
+        "id": "ARCH-01",
+        "from": "src/store/**",
+        "to": "src/views/**",
+        "reason": "由项目负责人确认状态层不得反向依赖页面层",
+        "confirmed": false
+      }
+    ]
+  },
+  "frontend": {
+    "node": "node",
+    "vue_parser": "auto",
+    "aliases": {
+      "@/": "src/"
+    },
+    "resolution_reviewed": false,
+    "console_methods": [
+      "log"
+    ],
+    "max_function_lines": 100
+  },
+  "java": {
+    "build": [],
+    "clean_build_confirmed": false,
+    "class_dirs": [],
+    "classpath": [],
+    "jdeps": "jdeps",
+    "entropy_command": [],
+    "entropy_coverage_confirmed": false
+  },
+  "entropy": {
+    "confirmed": false,
+    "reviewed_comments": [],
+    "max_file_lines": 800,
+    "issue_pattern": "(?:[A-Z][A-Z0-9]+-\\d+|#\\d+)"
+  },
+  "doc_sections": {}
+}
