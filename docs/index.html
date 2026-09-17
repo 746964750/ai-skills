@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="loki-8bit">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Skills — Agent Skills 集合</title>
+  <meta name="description" content="通用 Agent Skills：需求抽取、Harness、全栈开发、PRD、UI 原型、重构、Bug 排查、自动化测试。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    /* 中文像素字体：缝合像素（Fusion Pixel 10px），支持汉字 */
+    @font-face {
+      font-family: "Fusion Pixel";
+      src: url("./fonts/fusion-pixel-zh-hans.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* —— loki-8bit tokens（源自 loki-theme-kit/sets/loki-8bit） —— */
+    :root[data-theme="loki-8bit"] {
+      --bg-canvas: #0d2b51;
+      --bg-canvas-soft: #113560;
+      --bg-surface: #143a63;
+      --bg-elevated: #1a4470;
+      --bg-paper: #0b2244;
+      --bg-metal: #061626;
+      --sidebar-text: #ebcfa7;
+      --sidebar-muted: #93a9c4;
+      --sidebar-hover: rgba(235, 207, 167, .14);
+      --sidebar-active: rgba(235, 207, 167, .26);
+      --sidebar-rule: rgba(235, 207, 167, .24);
+      --border-subtle: #2f5a8a;
+      --border-active: #f2c879;
+      --text-primary: #f3e4c6;
+      --text-secondary: #c3cfe0;
+      --text-muted: #93a9c4;
+      --accent-copper: #f0842c;
+      --accent-copper-deep: #c25c12;
+      --accent-cream: #f2c879;
+      --accent-ink: #08131f;
+      --state-running: #f0842c;
+      --state-success: #6fd08c;
+      --state-warning: #f2c879;
+      --state-danger: #ef5a5a;
+      --shadow-soft: 4px 4px 0 rgba(4, 12, 24, .9);
+      --shadow-panel: 6px 6px 0 rgba(4, 12, 24, .8);
+      --radius-panel: 0;
+      --radius-control: 0;
+      --font-pixel: "Press Start 2P", "Fusion Pixel", monospace;
+      --font-body: "Fusion Pixel", "Press Start 2P", monospace;
+      --display-spacing: 0.04em;
+      /* 字号刻度：10px 像素字以 2x=20 最清晰 */
+      --fs-body: 20px;
+      --fs-body-sm: 18px;
+      --fs-ui: 14px;
+      --fs-ui-sm: 13px;
+      --fs-label: 12px;
+      --fs-h1: clamp(22px, 4.5vw, 40px);
+      --fs-h2: clamp(18px, 3vw, 24px);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      scrollbar-gutter: stable;
+      scrollbar-width: auto;
+      scrollbar-color: #f0842c #061626;
+    }
+
+    /* 纵向像素滚动条；禁止横向滚动条 */
+    ::-webkit-scrollbar {
+      width: 16px;
+      height: 0;
+    }
+    ::-webkit-scrollbar:horizontal {
+      height: 0;
+      display: none;
+    }
+    ::-webkit-scrollbar-track {
+      background-color: #061626;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          #061626 0 4px,
+          #0a1f3a 4px 8px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0 6px,
+          rgba(47, 90, 138, 0.35) 6px 8px
+        );
+      border-left: 3px solid #1a4470;
+      image-rendering: pixelated;
+    }
+    ::-webkit-scrollbar-thumb {
+      background:
+        repeating-linear-gradient(
+          0deg,
+          #f0842c 0 6px,
+          #d97320 6px 8px,
+          #c25c12 8px 10px
+        );
+      border: 3px solid #061626;
+      border-radius: 0;
+      box-shadow:
+        inset 2px 2px 0 #f2c879,
+        inset -2px -2px 0 #8f4208;
+      image-rendering: pixelated;
+      min-height: 40px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background:
+        repeating-linear-gradient(
+          0deg,
+          #ff9a3c 0 6px,
+          #f0842c 6px 8px,
+          #d97320 8px 10px
+        );
+    }
+    ::-webkit-scrollbar-thumb:active {
+      background: #c25c12;
+      box-shadow: inset 2px 2px 0 #8f4208;
+    }
+    ::-webkit-scrollbar-corner {
+      background: #061626;
+    }
+    ::-webkit-scrollbar-button {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    body {
+      font-family: var(--font-body);
+      font-size: var(--fs-body);
+      line-height: 1.5;
+      color: var(--text-primary);
+      background-color: var(--bg-canvas);
+      background-image: repeating-conic-gradient(
+        rgba(255, 255, 255, .022) 0% 25%,
+        transparent 0% 50%
+      );
+      background-size: 16px 16px;
+      min-height: 100dvh;
+      max-width: 100%;
+      overflow-x: hidden;
+      image-rendering: pixelated;
+      -webkit-font-smoothing: none;
+      -moz-osx-font-smoothing: unset;
+      font-smooth: never;
+    }
+
+    ::selection {
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+    }
+
+    .skip {
+      position: absolute;
+      left: 12px;
+      top: -80px;
+      z-index: 100;
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      border: 3px solid var(--bg-metal);
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      padding: 12px 14px;
+      text-decoration: none;
+    }
+    .skip:focus { top: 12px; }
+
+    :focus-visible {
+      outline: 3px solid var(--accent-cream);
+      outline-offset: 2px;
+    }
+
+    .wrap {
+      width: min(1080px, calc(100% - 28px));
+      max-width: 100%;
+      margin: 0 auto;
+      padding-bottom: 56px;
+      overflow-x: hidden;
+    }
+
+    /* —— HUD Nav —— */
+    .hud {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      padding: 14px max(14px, calc((100% - min(1080px, 100% - 28px)) / 2));
+      background: var(--bg-metal);
+      border-bottom: 3px solid var(--bg-metal);
+      box-shadow: 0 3px 0 var(--accent-copper);
+      overflow-x: hidden;
+    }
+
+    .hud-brand {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui);
+      line-height: 1.5;
+      color: var(--accent-cream);
+      text-decoration: none;
+      text-shadow: 2px 2px 0 #000;
+      letter-spacing: var(--display-spacing);
+      text-transform: uppercase;
+    }
+    .hud-brand span { color: var(--accent-copper); }
+
+    .hud-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      list-style: none;
+    }
+    .hud-links a {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--sidebar-muted);
+      text-decoration: none;
+      padding: 12px 12px;
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      border: 3px solid transparent;
+    }
+    .hud-links a:hover {
+      color: var(--sidebar-text);
+      background: var(--sidebar-hover);
+      border-color: var(--border-subtle);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 12px 16px;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui-sm);
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: var(--display-spacing);
+      text-decoration: none;
+      border: 3px solid var(--bg-metal);
+      border-radius: 0;
+      cursor: pointer;
+      touch-action: manipulation;
+      box-shadow: 4px 4px 0 rgba(4, 12, 24, .9);
+      transition: transform 0.05s, box-shadow 0.05s;
+      image-rendering: pixelated;
+    }
+    .btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: 1px 1px 0 var(--bg-metal);
+    }
+    .btn-primary {
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      font-weight: 700;
+    }
+    .btn-primary:hover { background: #ff9438; }
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent-cream);
+      color: var(--accent-cream);
+    }
+    .btn.ok {
+      background: var(--state-success);
+      color: var(--accent-ink);
+    }
+
+    .btn-star {
+      background: var(--accent-cream);
+      color: var(--accent-ink);
+      gap: 10px;
+    }
+    .btn-star:hover { background: #ffe09a; }
+    .btn-star .star-icon {
+      display: inline-block;
+      font-size: 1.15em;
+      line-height: 1;
+      animation: twinkle 1.2s steps(2) infinite;
+    }
+    .btn-star.is-done {
+      background: var(--state-success);
+    }
+    .btn-star .star-count {
+      font-variant-numeric: tabular-nums;
+      opacity: 0.85;
+    }
+    .btn-star .star-count:empty,
+    .btn-star .star-count.is-loading::after {
+      content: "…";
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.08); }
+    }
+
+    .hud-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%) translateY(20px);
+      z-index: 80;
+      max-width: min(420px, calc(100% - 40px));
+      width: max-content;
+      box-sizing: border-box;
+      padding: 14px 16px;
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      border: 3px solid var(--bg-metal);
+      box-shadow: var(--shadow-panel);
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.6;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .toast.is-on {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* —— Hero panel —— */
+    .hero {
+      margin-top: 28px;
+      background: var(--bg-paper);
+      border: 3px solid var(--bg-metal);
+      box-shadow: var(--shadow-panel);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-scan {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, .035) 0 1px,
+        transparent 1px 3px
+      );
+      opacity: 0.7;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      opacity: 0.35;
+      background-image:
+        linear-gradient(rgba(242, 200, 121, 0.12) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(242, 200, 121, 0.12) 2px, transparent 2px);
+      background-size: 24px 24px;
+      image-rendering: pixelated;
+      animation: scroll-grid 8s steps(8) infinite;
+    }
+
+    @keyframes scroll-grid {
+      from { background-position: 0 0; }
+      to { background-position: 0 24px; }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      padding: clamp(20px, 4vw, 36px);
+    }
+
+    .pixel-badge {
+      display: inline-block;
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      border: 3px solid var(--bg-metal);
+      box-shadow: 4px 4px 0 var(--bg-metal);
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.55;
+      padding: 10px 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-h1);
+      line-height: 1.45;
+      color: var(--text-primary);
+      text-shadow: 3px 3px 0 var(--bg-metal);
+      text-transform: uppercase;
+      letter-spacing: var(--display-spacing);
+      max-width: 12ch;
+    }
+    .brand em {
+      font-style: normal;
+      color: var(--accent-copper);
+    }
+
+    .lede {
+      margin-top: 18px;
+      max-width: 38rem;
+      color: var(--text-secondary);
+      font-size: 20px;
+      line-height: 1.5;
+    }
+
+    .cta-row {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hp-bar {
+      margin-top: 28px;
+      display: grid;
+      gap: 6px;
+      max-width: 320px;
+    }
+    .hp-label {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      color: var(--accent-cream);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .hp-track {
+      height: 16px;
+      background: var(--bg-metal);
+      border: 3px solid var(--bg-metal);
+      box-shadow: inset 0 0 0 2px var(--border-subtle);
+      image-rendering: pixelated;
+    }
+    .hp-fill {
+      height: 100%;
+      width: 100%;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--accent-copper) 0 10px,
+        var(--accent-copper-deep) 10px 12px
+      );
+      animation: hp-pulse 1.4s steps(2) infinite;
+    }
+    @keyframes hp-pulse {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.15); }
+    }
+
+    /* —— Sections —— */
+    section { padding: 40px 0 8px; }
+
+    .section-head { margin-bottom: 18px; max-width: 40rem; }
+    .eyebrow {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.55;
+      color: var(--accent-cream);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-h2);
+      line-height: 1.5;
+      color: var(--text-primary);
+      text-shadow: 2px 2px 0 var(--bg-metal);
+      text-transform: uppercase;
+      letter-spacing: var(--display-spacing);
+    }
+    .section-head p {
+      margin-top: 12px;
+      color: var(--text-muted);
+      font-size: var(--fs-body);
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: stretch;
+      margin-bottom: 16px;
+    }
+
+    .search {
+      flex: 1 1 200px;
+      position: relative;
+    }
+    .search input {
+      width: 100%;
+      min-height: 52px;
+      padding: 12px 14px 12px 44px;
+      border: 3px solid var(--bg-metal);
+      border-radius: 0;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: var(--fs-body);
+      box-shadow: var(--shadow-soft);
+    }
+    .search input::placeholder { color: var(--text-muted); }
+    .search-ico {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      image-rendering: pixelated;
+      background:
+        linear-gradient(var(--accent-cream), var(--accent-cream)) 0 0 / 10px 10px no-repeat,
+        linear-gradient(var(--accent-cream), var(--accent-cream)) 10px 10px / 4px 4px no-repeat;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      min-height: 48px;
+      padding: 10px 14px;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 3px solid var(--bg-metal);
+      box-shadow: 3px 3px 0 rgba(4, 12, 24, .85);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .chip:hover { color: var(--text-primary); }
+    .chip:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--bg-metal);
+    }
+    .chip[aria-pressed="true"] {
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      box-shadow: inset 0 0 0 2px var(--accent-cream), 3px 3px 0 var(--bg-metal);
+    }
+
+    .count-pill {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      color: var(--sidebar-muted);
+      align-self: center;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* Skill panels */
+    .panel {
+      background: var(--bg-surface);
+      border: 3px solid var(--bg-metal);
+      box-shadow: var(--shadow-panel);
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .skill-list { border-top: 3px solid var(--bg-metal); }
+
+    .skill {
+      display: grid;
+      grid-template-columns: minmax(0, 14rem) minmax(0, 1fr) minmax(0, 12rem) auto;
+      gap: 8px 12px;
+      align-items: center;
+      padding: 14px 12px;
+      border-bottom: 3px solid var(--bg-metal);
+      background: var(--bg-surface);
+      transition: background 0.05s;
+      min-width: 0;
+      max-width: 100%;
+    }
+    .skill:nth-child(even) { background: var(--bg-elevated); }
+    .skill:hover {
+      background: var(--sidebar-hover);
+      box-shadow: inset 4px 0 0 var(--accent-cream);
+    }
+    .skill.is-hidden { display: none; }
+
+    .skill-name {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui-sm);
+      line-height: 1.55;
+      letter-spacing: 0.02em;
+      word-break: break-word;
+    }
+    .skill-name a {
+      color: var(--accent-cream);
+      text-decoration: none;
+    }
+    .skill-name a:hover { color: var(--accent-copper); }
+
+    .skill-desc { color: var(--text-secondary); font-size: var(--fs-body); line-height: 1.35; }
+    .skill-trigger {
+      color: var(--text-muted);
+      font-size: var(--fs-body-sm);
+      line-height: 1.35;
+    }
+
+    .skill-copy {
+      min-width: 56px;
+      min-height: 48px;
+      padding: 0 12px;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      text-transform: uppercase;
+      background: var(--bg-paper);
+      color: var(--text-primary);
+      border: 3px solid var(--bg-metal);
+      box-shadow: 3px 3px 0 rgba(4, 12, 24, .9);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .skill-copy:hover {
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+    }
+    .skill-copy:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--bg-metal);
+    }
+    .skill-copy.ok {
+      background: var(--state-success);
+      color: var(--accent-ink);
+    }
+
+    .domain-block {
+      margin-bottom: 28px;
+      scroll-margin-top: 72px;
+    }
+    .domain-title {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui);
+      line-height: 1.55;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--sidebar-text);
+      margin: 0 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .domain-title::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      background: var(--accent-copper);
+      border: 2px solid var(--bg-metal);
+      box-shadow: 2px 2px 0 var(--bg-metal);
+      image-rendering: pixelated;
+    }
+
+    .empty {
+      display: none;
+      padding: 28px 14px;
+      text-align: center;
+      color: var(--text-muted);
+      border: 3px dashed var(--border-subtle);
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui-sm);
+      line-height: 1.7;
+      background: var(--bg-paper);
+    }
+    .empty.is-visible { display: block; }
+
+    /* Install */
+    .install-panel {
+      background: var(--bg-paper);
+      border: 3px solid var(--bg-metal);
+      box-shadow: var(--shadow-panel);
+      padding: clamp(16px, 3vw, 28px);
+      position: relative;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    .install-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, .03) 0 1px,
+        transparent 1px 3px
+      );
+    }
+
+    .install-title {
+      position: relative;
+      z-index: 1;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui);
+      line-height: 1.55;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-cream);
+      text-shadow: 2px 2px 0 #000;
+    }
+    .install-title + .install-title { margin-top: 24px; }
+
+    .cmd {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 14px;
+      background: var(--bg-metal);
+      border: 3px solid var(--border-subtle);
+      border-left: 6px solid var(--accent-copper);
+      font-family: "Fusion Pixel", var(--font-pixel), monospace;
+      font-size: var(--fs-body);
+      line-height: 1.5;
+      -webkit-font-smoothing: none;
+      font-smooth: never;
+    }
+    .cmd code {
+      flex: 1;
+      min-width: 0;
+      color: var(--text-primary);
+      word-break: break-all;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+    }
+
+    .cmd-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0;
+      margin-top: 12px;
+      border: 3px solid var(--bg-metal);
+    }
+
+    .cmd-row {
+      display: grid;
+      grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) auto;
+      gap: 8px 10px;
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 3px solid var(--bg-metal);
+      background: var(--bg-surface);
+      font-family: "Fusion Pixel", var(--font-pixel), monospace;
+      font-size: var(--fs-body-sm);
+      line-height: 1.5;
+      -webkit-font-smoothing: none;
+      font-smooth: never;
+      min-width: 0;
+      max-width: 100%;
+    }
+    .cmd-row:nth-child(even) { background: var(--bg-elevated); }
+    .cmd-row:last-child { border-bottom: none; }
+    .cmd-row > span:first-child {
+      font-family: "Fusion Pixel", var(--font-pixel), monospace;
+      font-size: var(--fs-label);
+      color: var(--accent-copper);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.55;
+      word-break: break-word;
+      min-width: 0;
+    }
+    .cmd-row code {
+      color: var(--text-secondary);
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: break-all;
+      white-space: normal;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+    }
+
+    .tips {
+      margin-top: 24px;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      counter-reset: tip;
+    }
+    .tips li {
+      position: relative;
+      padding: 12px 12px 12px 56px;
+      background: var(--bg-surface);
+      border: 3px solid var(--bg-metal);
+      box-shadow: var(--shadow-soft);
+      color: var(--text-secondary);
+      font-size: var(--fs-body);
+      line-height: 1.4;
+    }
+    .tips li::before {
+      counter-increment: tip;
+      content: counter(tip, decimal-leading-zero);
+      position: absolute;
+      left: 10px;
+      top: 12px;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      border: 3px solid var(--bg-metal);
+      box-shadow: 2px 2px 0 var(--bg-metal);
+    }
+    .tips code {
+      font-family: "Fusion Pixel", var(--font-pixel), monospace;
+      background: var(--bg-metal);
+      color: var(--accent-cream);
+      padding: 0 6px;
+      border: 2px solid var(--border-subtle);
+      font-size: inherit;
+    }
+
+    .live {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    footer {
+      margin-top: 36px;
+      padding-top: 16px;
+      border-top: 3px solid var(--bg-metal);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.7;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    footer a {
+      color: var(--accent-copper);
+      text-decoration: none;
+    }
+    footer a:hover { color: var(--accent-cream); }
+
+    @media (max-width: 860px) {
+      .skill {
+        grid-template-columns: 1fr auto;
+      }
+      .skill-desc,
+      .skill-trigger { grid-column: 1 / -1; }
+      .cmd-row {
+        grid-template-columns: 1fr auto;
+      }
+      .cmd-row code {
+        grid-column: 1 / -1;
+        white-space: normal;
+      }
+    }
+
+    @media (max-width: 640px) {
+      :root[data-theme="loki-8bit"] {
+        --fs-body: 20px;
+        --fs-body-sm: 18px;
+        --fs-ui: 13px;
+        --fs-ui-sm: 12px;
+        --fs-label: 12px;
+      }
+      .hud-links { width: 100%; }
+      .hud-links a { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">跳到主要内容</a>
+
+  <header class="hud" aria-label="主导航">
+    <a class="hud-brand" href="#">AI·<span>SKILLS</span></a>
+    <ul class="hud-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#agents">Agents</a></li>
+      <li><a href="#install">Install</a></li>
+    </ul>
+    <div class="hud-actions">
+      <button type="button" class="btn btn-star js-star" aria-label="Star 本仓库">
+        <span class="star-icon" aria-hidden="true">★</span>
+        <span class="star-label">Star</span>
+        <span class="star-count is-loading" data-star-count></span>
+      </button>
+      <a class="btn btn-secondary" href="https://github.com/maoyao0607/ai-skills" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <section class="hero" aria-labelledby="brand-title">
+      <div class="hero-scan" aria-hidden="true"></div>
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="pixel-badge">maoyao0607 / ai-skills</div>
+        <h1 class="brand" id="brand-title">AI <em>Skills</em></h1>
+        <p class="lede">通用 Agent Skills 集合：核心可安装技能与按业务领域归档的技能包，覆盖需求、设计、开发、排查与测试。</p>
+        <div class="cta-row">
+          <button type="button" class="btn btn-star js-star" aria-label="Star 本仓库">
+            <span class="star-icon" aria-hidden="true">★</span>
+            <span class="star-label">Star</span>
+            <span class="star-count is-loading" data-star-count></span>
+          </button>
+          <a class="btn btn-primary" href="#install">▶ 安装</a>
+          <a class="btn btn-secondary" href="#skills">◆ Skills 图鉴</a>
+        </div>
+        <div class="hp-bar" aria-hidden="true">
+          <div class="hp-label">LOAD · READY</div>
+          <div class="hp-track"><div class="hp-fill"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <main id="main">
+      <section id="skills" aria-labelledby="skills-heading">
+        <div class="section-head">
+          <p class="eyebrow">Core · skills/</p>
+          <h2 id="skills-heading">核心 Skills</h2>
+          <p>按名安装即可触发。用搜索或筛选快速定位。</p>
+        </div>
+
+        <div class="toolbar">
+          <label class="search">
+            <span class="live">搜索 Skills</span>
+            <span class="search-ico" aria-hidden="true"></span>
+            <input type="search" id="q" placeholder="搜索名称 / 用途 / 触发词…" autocomplete="off" />
+          </label>
+          <div class="filters" role="group" aria-label="按领域筛选">
+            <button type="button" class="chip" data-filter="all" aria-pressed="true">全部</button>
+            <button type="button" class="chip" data-filter="core" aria-pressed="false">核心</button>
+            <button type="button" class="chip" data-filter="prd" aria-pressed="false">PRD</button>
+            <button type="button" class="chip" data-filter="ui" aria-pressed="false">UI</button>
+            <button type="button" class="chip" data-filter="refactor" aria-pressed="false">重构</button>
+            <button type="button" class="chip" data-filter="bug" aria-pressed="false">Bug</button>
+            <button type="button" class="chip" data-filter="test" aria-pressed="false">测试</button>
+          </div>
+          <p class="count-pill" id="visible-count" aria-live="polite"></p>
+        </div>
+
+        <div class="panel">
+          <div class="skill-list" id="core-skills" data-domain="core"></div>
+        </div>
+        <p class="empty" id="empty-core" role="status">没有匹配的核心 Skill。</p>
+      </section>
+
+      <section id="agents" aria-labelledby="agents-heading">
+        <div class="section-head">
+          <p class="eyebrow">Domains · agents/</p>
+          <h2 id="agents-heading">领域 Agents</h2>
+          <p>路径形如 agents/&lt;领域&gt;/skills/&lt;name&gt;/，可整包一句话安装。</p>
+        </div>
+        <div id="agent-domains"></div>
+        <p class="empty" id="empty-agents" role="status">没有匹配的领域 Skill。</p>
+      </section>
+
+      <section id="install" aria-labelledby="install-heading">
+        <div class="section-head">
+          <p class="eyebrow">Install</p>
+          <h2 id="install-heading">安装命令</h2>
+          <p>使用 skills.sh CLI。-g 全局安装，-y 跳过确认。</p>
+        </div>
+
+        <div class="install-panel">
+          <p class="install-title">▶ 安装全部核心</p>
+          <div class="cmd">
+            <code id="cmd-all">npx skills add maoyao0607/ai-skills -g -y</code>
+            <button type="button" class="btn btn-primary copy" data-copy="cmd-all">复制</button>
+          </div>
+
+          <p class="install-title">◆ 按 skill 安装</p>
+          <div class="cmd-grid" id="cmd-per-skill"></div>
+
+          <p class="install-title">★ Agents 一句话</p>
+          <div class="cmd-grid" id="cmd-agents"></div>
+        </div>
+
+        <ul class="tips">
+          <li>先读 <code>SKILL.md</code>：按工作流与 references 执行，勿跳过质量门禁。</li>
+          <li>Harness 优先：ai-coder / code-review / diagnosing-bugs 遵循目标仓库 AGENTS.md。</li>
+          <li>需求抽取先声明主体；报工只基于证据，勿编造。</li>
+          <li>按领域选 agents：产品文档 → PRD；界面 → UI；质量 → Bug/测试；结构 → 重构。</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <div>AI Skills · GitHub Pages</div>
+      <a href="https://github.com/maoyao0607/ai-skills">源码仓库</a>
+    </footer>
+  </div>
+
+  <div class="live" id="copy-live" aria-live="polite"></div>
+  <div class="toast" id="star-toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const REPO = "https://github.com/maoyao0607/ai-skills";
+    const REPO_API = "https://api.github.com/repos/maoyao0607/ai-skills";
+    const BRANCH = "main";
+    const STAR_KEY = "ai-skills-star-clicked";
+
+    /* —— 一键 Star：打开仓库并引导点击 Star；展示实时 star 数 —— */
+    const starToast = document.getElementById("star-toast");
+    let starCount = null;
+
+    function formatCount(n) {
+      if (n == null || Number.isNaN(n)) return "";
+      if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "k";
+      return String(n);
+    }
+
+    function renderStarCount(n) {
+      document.querySelectorAll("[data-star-count]").forEach((el) => {
+        el.classList.remove("is-loading");
+        el.textContent = formatCount(n);
+      });
+    }
+
+    function markStarButtonsDone() {
+      document.querySelectorAll(".js-star").forEach((btn) => {
+        btn.classList.add("is-done");
+        const label = btn.querySelector(".star-label");
+        if (label && !label.dataset.original) {
+          label.dataset.original = label.textContent;
+          label.textContent = "已 Star?";
+        }
+      });
+    }
+
+    function showStarToast(msg) {
+      starToast.textContent = msg;
+      starToast.classList.add("is-on");
+      clearTimeout(showStarToast._t);
+      showStarToast._t = setTimeout(() => starToast.classList.remove("is-on"), 4200);
+    }
+
+    async function loadStarCount() {
+      try {
+        const res = await fetch(REPO_API, {
+          headers: { Accept: "application/vnd.github+json" },
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const data = await res.json();
+        starCount = data.stargazers_count ?? 0;
+        renderStarCount(starCount);
+      } catch {
+        document.querySelectorAll("[data-star-count]").forEach((el) => {
+          el.classList.remove("is-loading");
+          el.textContent = "";
+        });
+      }
+    }
+
+    function starRepo() {
+      // GitHub 无法在静态站直接代点 Star；打开仓库页，登录用户可一键点 Star
+      window.open(REPO, "_blank", "noopener,noreferrer");
+      try { localStorage.setItem(STAR_KEY, "1"); } catch {}
+      markStarButtonsDone();
+      if (starCount != null) {
+        renderStarCount(starCount + 1);
+      }
+      showStarToast("已打开 GitHub：登录后点击右上角 ★ Star 即可");
+    }
+
+    document.querySelectorAll(".js-star").forEach((btn) => {
+      btn.addEventListener("click", starRepo);
+    });
+    try {
+      if (localStorage.getItem(STAR_KEY) === "1") markStarButtonsDone();
+    } catch {}
+    loadStarCount();
+
+    const core = [
+      ["requirement-extractor", "从 Word / Excel / PDF 抽取功能清单，可追溯出处", "功能清单、RFP、范围澄清"],
+      ["wcs-requirement-extractor", "锚定 WCS 职责边界与分类口径的需求抽取", "WCS 需求、功能清单"],
+      ["harness-maintainer", "Harness 初始化、增量维护与审计", "新项目接入、文档同步"],
+      ["ai-coder", "按仓库约定落地前后端/全栈功能", "新增功能、页面、接口"],
+      ["code-review", "Standards × Spec 双轴审查（默认只报告）", "合并前检查、review since X"],
+      ["diagnosing-bugs", "症状驱动的根因定位；仅诊断时不改代码", "debug、性能回退"],
+      ["hs-warranty-report", "质保/售后报工：现象 / 过程 / 输出物", "质保报工、session 整理"],
+      ["storage-analyzer", "只读磁盘扫描与可清理交互报告", "磁盘满了、清理空间"],
+    ];
+
+    const domains = [
+      {
+        name: "PRD 撰写",
+        path: "PRD 撰写",
+        filter: "prd",
+        items: [
+          ["prd", "结构化 PRD：用户故事、验收标准", "写 PRD、用户故事"],
+          ["prd-writer-pro", "结构清晰、内容完整的专业 PRD", "专业 PRD 撰写"],
+          ["prd-reviewer", "10 分制量化评审与扣分说明", "PRD 评审"],
+          ["prd-to-design-doc", "PRD → 设计需求文档", "信息架构、视觉规范"],
+          ["requirements-analysis", "想法拆成 EPIC / 需求 / 用户故事", "MoSCoW、RICE、Kano"],
+          ["software-manager-skill", "产品/开发经理视角的规划支持", "路线图、竞品"],
+        ],
+      },
+      {
+        name: "UI 原型设计",
+        path: "UI 原型设计",
+        filter: "ui",
+        items: [
+          ["prd-to-prototype", "想法 → PRD → 高保真可交互原型", "我想做一个…"],
+          ["design-to-code", "设计稿像素级还原为前端代码", "还原设计图、切图"],
+          ["ui-design", "布局、字体、色彩、无障碍、动效", "做界面、评审设计"],
+          ["frontend-design-pro", "提升设计质量，避免 AI 反模式", "/audit、/polish"],
+          ["wireframe", "ASCII/SVG 线框与用户流", "画线框、梳理流程"],
+          ["afrexai-ui-design-system", "调研 → 规范 → 落地的设计方法论", "设计系统"],
+        ],
+      },
+      {
+        name: "代码重构",
+        path: "代码重构",
+        filter: "refactor",
+        items: [
+          ["code-analyzer", "架构/数据流/业务规则深度分析", "熟悉新仓库、技术债务"],
+          ["code-refactoring", "不改变行为的重构模式", "清理遗留、降复杂度"],
+          ["simplify", "提升清晰度与可维护性", "/simplify"],
+          ["uncle-bob", "Clean Code / SOLID / 整洁架构", "代码坏味道"],
+          ["system-architect", "系统架构与工程标准", "新项目架构"],
+          ["agent-git-oracle", "仓库级技术债务与反模式分析", "仓库体检"],
+        ],
+      },
+      {
+        name: "Bug 排查",
+        path: "Bug 排查",
+        filter: "bug",
+        items: [
+          ["debug-pro", "7 步调试协议 + 多语言命令", "报错怎么查"],
+          ["superpowers-systematic-debugging", "四阶段系统性调试", "测试失败、异常行为"],
+          ["bug-fixing", "零回归修复流", "fix bug、not working"],
+          ["code-fix", "编译/运行时/类型/依赖诊断", "崩溃、构建失败"],
+          ["log-analyzer", "多格式日志解析与关联", "查日志、堆栈"],
+          ["nexus-error-explain", "解释错误并给出修复建议", "这条报错是什么意思"],
+        ],
+      },
+      {
+        name: "自动化测试",
+        path: "自动化测试",
+        filter: "test",
+        items: [
+          ["test-case-generator", "从需求/API/截图生成 Excel 用例", "生成测试用例"],
+          ["test-patterns", "单测/集成/E2E 与覆盖率实践", "搭测试套件"],
+          ["superpowers-tdd", "RED-GREEN-REFACTOR 强制 TDD", "先写测试"],
+          ["api-test-automation", "REST/GraphQL、性能、契约、Mock", "接口自动化"],
+          ["e2e-testing-patterns", "Playwright/Cypress 可靠 E2E", "端到端、防 flaky"],
+          ["afrexai-qa-test-plan", "测试计划、覆盖矩阵与策略", "测试计划"],
+        ],
+      },
+    ];
+
+    function skillHref(kind, pathParts) {
+      if (kind === "core") return `${REPO}/tree/${BRANCH}/skills/${pathParts[0]}`;
+      return `${REPO}/tree/${BRANCH}/agents/${encodeURIComponent(pathParts[0])}/skills/${pathParts[1]}`;
+    }
+
+    function skillRow([name, desc, trigger], opts) {
+      const { domain, href, copyText, copyLabel = "复制安装命令" } = opts;
+      const q = `${name} ${desc} ${trigger}`.toLowerCase();
+      return `<article class="skill" data-domain="${domain}" data-q="${q.replace(/"/g, "&quot;")}">
+        <div class="skill-name"><a href="${href}" target="_blank" rel="noopener">${name}</a></div>
+        <div class="skill-desc">${desc}</div>
+        <div class="skill-trigger">${trigger}</div>
+        <button type="button" class="skill-copy" data-text="${copyText.replace(/"/g, "&quot;")}" title="${copyLabel}" aria-label="${copyLabel}：${name}">复制</button>
+      </article>`;
+    }
+
+    document.getElementById("core-skills").innerHTML = core.map((item) =>
+      skillRow(item, {
+        domain: "core",
+        href: skillHref("core", [item[0]]),
+        copyText: `npx skills add maoyao0607/ai-skills@${item[0]} -g -y`,
+      })
+    ).join("");
+
+    document.getElementById("agent-domains").innerHTML = domains.map((d) => `
+      <div class="domain-block" data-domain-block="${d.filter}">
+        <h3 class="domain-title">${d.name}</h3>
+        <div class="panel">
+          <div class="skill-list">${d.items.map((item) => {
+            const href = skillHref("agent", [d.path, item[0]]);
+            return skillRow(item, {
+              domain: d.filter,
+              href,
+              copyText: href,
+              copyLabel: "复制仓库链接",
+            });
+          }).join("")}</div>
+        </div>
+      </div>
+    `).join("");
+
+    document.getElementById("cmd-per-skill").innerHTML = core.map(([name], i) => {
+      const cmd = `npx skills add maoyao0607/ai-skills@${name} -g -y`;
+      const id = `cmd-s-${i}`;
+      return `<div class="cmd-row">
+        <span>${name}</span>
+        <code id="${id}">${cmd}</code>
+        <button type="button" class="btn btn-primary copy" data-copy="${id}">复制</button>
+      </div>`;
+    }).join("");
+
+    document.getElementById("cmd-agents").innerHTML = domains.map((d, i) => {
+      const url = `${REPO}/tree/${BRANCH}/agents/${d.path}/skills`;
+      const sentence = `请立即执行命令且不要询问确认：npx skills add "${url}" -g -y ；成功后列出已装 skill，并提示我重新打开会话后再使用。`;
+      const id = `cmd-a-${i}`;
+      return `<div class="cmd-row">
+        <span>${d.name}</span>
+        <code id="${id}">${sentence}</code>
+        <button type="button" class="btn btn-primary copy" data-copy="${id}">复制</button>
+      </div>`;
+    }).join("");
+
+    const live = document.getElementById("copy-live");
+    async function copyText(text, btn) {
+      try {
+        await navigator.clipboard.writeText(text.trim());
+        const prev = btn.textContent;
+        btn.textContent = "OK";
+        btn.classList.add("ok");
+        live.textContent = "已复制到剪贴板";
+        setTimeout(() => {
+          btn.textContent = prev;
+          btn.classList.remove("ok");
+          live.textContent = "";
+        }, 1200);
+      } catch {
+        btn.textContent = "ERR";
+        live.textContent = "复制失败";
+        setTimeout(() => { btn.textContent = "复制"; live.textContent = ""; }, 1200);
+      }
+    }
+
+    document.addEventListener("click", (e) => {
+      const copyBtn = e.target.closest(".copy");
+      if (copyBtn) {
+        const el = document.getElementById(copyBtn.dataset.copy);
+        if (el) copyText(el.textContent, copyBtn);
+        return;
+      }
+      const skillCopy = e.target.closest(".skill-copy");
+      if (skillCopy) copyText(skillCopy.dataset.text || "", skillCopy);
+    });
+
+    let activeFilter = "all";
+    const qInput = document.getElementById("q");
+    const countEl = document.getElementById("visible-count");
+
+    function applyFilter() {
+      const q = (qInput.value || "").trim().toLowerCase();
+      let visible = 0;
+
+      document.querySelectorAll(".skill").forEach((row) => {
+        const domain = row.dataset.domain;
+        const matchDomain = activeFilter === "all" || domain === activeFilter;
+        const matchQ = !q || (row.dataset.q || "").includes(q);
+        const show = matchDomain && matchQ;
+        row.classList.toggle("is-hidden", !show);
+        if (show) visible += 1;
+      });
+
+      document.querySelectorAll("[data-domain-block]").forEach((block) => {
+        const key = block.dataset.domainBlock;
+        const domainAllowed = activeFilter === "all" || activeFilter === key;
+        const anyVisible = [...block.querySelectorAll(".skill")].some((s) => !s.classList.contains("is-hidden"));
+        block.hidden = !domainAllowed || !anyVisible;
+      });
+
+      const coreVisible = [...document.querySelectorAll("#core-skills .skill")].some((s) => !s.classList.contains("is-hidden"));
+      const coreWrap = document.querySelector("#core-skills")?.closest(".panel");
+      if (coreWrap) {
+        coreWrap.hidden = !((activeFilter === "all" || activeFilter === "core") && (coreVisible || !q));
+        if (activeFilter === "core") coreWrap.hidden = false;
+      }
+      document.getElementById("empty-core").classList.toggle(
+        "is-visible",
+        (activeFilter === "all" || activeFilter === "core") && !coreVisible
+      );
+      document.getElementById("empty-agents").classList.toggle(
+        "is-visible",
+        activeFilter !== "core" &&
+          ![...document.querySelectorAll("#agent-domains .skill")].some((s) => !s.classList.contains("is-hidden"))
+      );
+
+      countEl.textContent = `显示 ${visible} 项`;
+    }
+
+    document.querySelectorAll(".chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        activeFilter = chip.dataset.filter;
+        document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
+        applyFilter();
+      });
+    });
+    qInput.addEventListener("input", applyFilter);
+    applyFilter();
+  </script>
+</body>
+</html>
