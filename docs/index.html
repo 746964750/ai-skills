@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="loki-8bit">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,571 +7,750 @@
   <meta name="description" content="通用 Agent Skills：需求抽取、Harness、全栈开发、PRD、UI 原型、重构、Bug 排查、自动化测试。" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,400;7..72,600&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --canvas: #e4eaf0;
-      --surface: #f4f7fa;
-      --ink: #10151c;
-      --ink-muted: #4a5563;
-      --forest: #0b2418;
-      --forest-mid: #143528;
-      --acid: #c8f542;
-      --acid-deep: #9bc41a;
-      --teal: #1faa7a;
-      --line: rgba(16, 21, 28, 0.1);
-      --line-soft: rgba(16, 21, 28, 0.06);
-      --focus: #1faa7a;
-      --ok: #1b7a52;
-      --font-display: "Unbounded", sans-serif;
-      --font-body: "Literata", Georgia, serif;
-      --font-mono: "JetBrains Mono", ui-monospace, monospace;
-      --space-1: 0.25rem;
-      --space-2: 0.5rem;
-      --space-3: 0.75rem;
-      --space-4: 1rem;
-      --space-5: 1.5rem;
-      --space-6: 2rem;
-      --space-7: 3rem;
-      --space-8: 4.5rem;
-      --radius: 2px;
-      --ease: cubic-bezier(0.22, 1, 0.36, 1);
-      --z-skip: 1000;
-      --z-nav: 40;
-      --z-content: 2;
+    /* 中文像素字体：缝合像素（Fusion Pixel 10px），支持汉字 */
+    @font-face {
+      font-family: "Fusion Pixel";
+      src: url("./fonts/fusion-pixel-zh-hans.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* —— loki-8bit tokens（源自 loki-theme-kit/sets/loki-8bit） —— */
+    :root[data-theme="loki-8bit"] {
+      --bg-canvas: #0d2b51;
+      --bg-canvas-soft: #113560;
+      --bg-surface: #143a63;
+      --bg-elevated: #1a4470;
+      --bg-paper: #0b2244;
+      --bg-metal: #061626;
+      --sidebar-text: #ebcfa7;
+      --sidebar-muted: #93a9c4;
+      --sidebar-hover: rgba(235, 207, 167, .14);
+      --sidebar-active: rgba(235, 207, 167, .26);
+      --sidebar-rule: rgba(235, 207, 167, .24);
+      --border-subtle: #2f5a8a;
+      --border-active: #f2c879;
+      --text-primary: #f3e4c6;
+      --text-secondary: #c3cfe0;
+      --text-muted: #93a9c4;
+      --accent-copper: #f0842c;
+      --accent-copper-deep: #c25c12;
+      --accent-cream: #f2c879;
+      --accent-ink: #08131f;
+      --state-running: #f0842c;
+      --state-success: #6fd08c;
+      --state-warning: #f2c879;
+      --state-danger: #ef5a5a;
+      --shadow-soft: 4px 4px 0 rgba(4, 12, 24, .9);
+      --shadow-panel: 6px 6px 0 rgba(4, 12, 24, .8);
+      --radius-panel: 0;
+      --radius-control: 0;
+      --font-pixel: "Press Start 2P", "Fusion Pixel", monospace;
+      --font-body: "Fusion Pixel", "Press Start 2P", monospace;
+      --display-spacing: 0.04em;
+      /* 字号刻度：10px 像素字以 2x=20 最清晰 */
+      --fs-body: 20px;
+      --fs-body-sm: 18px;
+      --fs-ui: 14px;
+      --fs-ui-sm: 13px;
+      --fs-label: 12px;
+      --fs-h1: clamp(22px, 4.5vw, 40px);
+      --fs-h2: clamp(18px, 3vw, 24px);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      scrollbar-gutter: stable;
+      scrollbar-width: auto;
+      scrollbar-color: #f0842c #061626;
+    }
+
+    /* 纵向像素滚动条；禁止横向滚动条 */
+    ::-webkit-scrollbar {
+      width: 16px;
+      height: 0;
+    }
+    ::-webkit-scrollbar:horizontal {
+      height: 0;
+      display: none;
+    }
+    ::-webkit-scrollbar-track {
+      background-color: #061626;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          #061626 0 4px,
+          #0a1f3a 4px 8px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent 0 6px,
+          rgba(47, 90, 138, 0.35) 6px 8px
+        );
+      border-left: 3px solid #1a4470;
+      image-rendering: pixelated;
+    }
+    ::-webkit-scrollbar-thumb {
+      background:
+        repeating-linear-gradient(
+          0deg,
+          #f0842c 0 6px,
+          #d97320 6px 8px,
+          #c25c12 8px 10px
+        );
+      border: 3px solid #061626;
+      border-radius: 0;
+      box-shadow:
+        inset 2px 2px 0 #f2c879,
+        inset -2px -2px 0 #8f4208;
+      image-rendering: pixelated;
+      min-height: 40px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background:
+        repeating-linear-gradient(
+          0deg,
+          #ff9a3c 0 6px,
+          #f0842c 6px 8px,
+          #d97320 8px 10px
+        );
+    }
+    ::-webkit-scrollbar-thumb:active {
+      background: #c25c12;
+      box-shadow: inset 2px 2px 0 #8f4208;
+    }
+    ::-webkit-scrollbar-corner {
+      background: #061626;
+    }
+    ::-webkit-scrollbar-button {
+      display: none;
+      width: 0;
+      height: 0;
+    }
 
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+        animation: none !important;
+        transition: none !important;
       }
     }
 
     body {
       font-family: var(--font-body);
-      font-size: 1.0625rem;
-      line-height: 1.6;
-      color: var(--ink);
-      background: var(--canvas);
+      font-size: var(--fs-body);
+      line-height: 1.5;
+      color: var(--text-primary);
+      background-color: var(--bg-canvas);
+      background-image: repeating-conic-gradient(
+        rgba(255, 255, 255, .022) 0% 25%,
+        transparent 0% 50%
+      );
+      background-size: 16px 16px;
       min-height: 100dvh;
-      -webkit-font-smoothing: antialiased;
+      max-width: 100%;
+      overflow-x: hidden;
+      image-rendering: pixelated;
+      -webkit-font-smoothing: none;
+      -moz-osx-font-smoothing: unset;
+      font-smooth: never;
     }
 
-    /* Cool mist + blueprint grid atmosphere */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse 70% 45% at 85% -5%, rgba(31, 170, 122, 0.12), transparent 55%),
-        radial-gradient(ellipse 50% 40% at 0% 30%, rgba(200, 245, 66, 0.08), transparent 50%),
-        linear-gradient(180deg, #dde5ed 0%, var(--canvas) 28%, var(--canvas) 100%);
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.45;
-      background-image:
-        linear-gradient(rgba(16, 21, 28, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(16, 21, 28, 0.035) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
+    ::selection {
+      background: var(--accent-copper);
+      color: var(--accent-ink);
     }
 
     .skip {
       position: absolute;
-      left: var(--space-4);
-      top: -100px;
-      z-index: var(--z-skip);
-      background: var(--acid);
-      color: var(--ink);
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.85rem;
-      padding: 0.75rem 1.1rem;
+      left: 12px;
+      top: -80px;
+      z-index: 100;
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      border: 3px solid var(--bg-metal);
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      padding: 12px 14px;
       text-decoration: none;
     }
-    .skip:focus { top: var(--space-4); outline: 3px solid var(--ink); outline-offset: 2px; }
+    .skip:focus { top: 12px; }
 
     :focus-visible {
-      outline: 3px solid var(--focus);
-      outline-offset: 3px;
+      outline: 3px solid var(--accent-cream);
+      outline-offset: 2px;
     }
 
-    .page {
-      position: relative;
-      z-index: var(--z-content);
-      width: min(1140px, calc(100% - 2rem));
+    .wrap {
+      width: min(1080px, calc(100% - 28px));
+      max-width: 100%;
       margin: 0 auto;
+      padding-bottom: 56px;
+      overflow-x: hidden;
     }
 
-    /* —— Nav —— */
-    .nav {
+    /* —— HUD Nav —— */
+    .hud {
       position: sticky;
       top: 0;
-      z-index: var(--z-nav);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-4);
-      padding: 0.85rem 0;
-      margin: 0 calc(50% - 50vw);
-      padding-inline: max(1rem, calc(50vw - 570px));
-      background: color-mix(in srgb, var(--canvas) 82%, transparent);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.25s var(--ease), background 0.25s;
-    }
-    .nav.is-scrolled {
-      border-bottom-color: var(--line);
-      background: color-mix(in srgb, var(--canvas) 92%, transparent);
-    }
-
-    .nav-brand {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: 0.95rem;
-      letter-spacing: -0.03em;
-      color: var(--ink);
-      text-decoration: none;
-    }
-    .nav-brand span { color: var(--teal); }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      list-style: none;
-    }
-    .nav-links a {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--ink-muted);
-      text-decoration: none;
-      padding: 0.65rem 0.75rem;
-      min-height: 44px;
-      display: inline-flex;
-      align-items: center;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover,
-    .nav-links a[aria-current="true"] { color: var(--ink); }
-
-    .nav-gh {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--ink);
-      text-decoration: none;
-      border: 1px solid var(--ink);
-      padding: 0.55rem 0.85rem;
-      min-height: 44px;
-      display: inline-flex;
-      align-items: center;
-      transition: background 0.2s, color 0.2s;
-    }
-    .nav-gh:hover { background: var(--ink); color: var(--acid); }
-
-    .nav-toggle {
-      display: none;
-      background: transparent;
-      border: 1px solid var(--ink);
-      width: 44px;
-      height: 44px;
-      cursor: pointer;
-      align-items: center;
-      justify-content: center;
-    }
-    .nav-toggle svg { width: 18px; height: 18px; }
-
-    /* —— Hero —— */
-    .hero {
-      position: relative;
-      min-height: min(100svh, 920px);
-      margin: 0 calc(50% - 50vw);
-      width: 100vw;
-      display: grid;
-      align-content: end;
-      overflow: hidden;
-      color: #e8f0ea;
-      isolation: isolate;
-    }
-
-    .hero-plane {
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      background:
-        linear-gradient(155deg, var(--forest) 0%, #0f3324 48%, #0a1c14 100%);
-    }
-
-    .hero-plane::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 55% 50% at 78% 35%, rgba(200, 245, 66, 0.22), transparent 62%),
-        radial-gradient(ellipse 40% 35% at 15% 80%, rgba(31, 170, 122, 0.18), transparent 60%);
-      animation: glow-drift 10s ease-in-out infinite alternate;
-    }
-
-    @keyframes glow-drift {
-      from { transform: translate(0, 0) scale(1); }
-      to { transform: translate(-2%, 3%) scale(1.05); }
-    }
-
-    .hero-lattice {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      opacity: 0.55;
-      animation: lattice-shift 18s linear infinite;
-    }
-
-    @keyframes lattice-shift {
-      from { transform: translateY(0); }
-      to { transform: translateY(-40px); }
-    }
-
-    .hero-inner {
-      width: min(1140px, calc(100% - 2rem));
-      margin: 0 auto;
-      padding: 5.5rem 0 3.75rem;
-    }
-
-    .hero-meta {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(200, 245, 66, 0.85);
-      margin-bottom: 1.25rem;
-      opacity: 0;
-      animation: rise 0.7s var(--ease) forwards 0.1s;
-    }
-
-    .brand {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: clamp(3.2rem, 10vw, 6.75rem);
-      line-height: 0.92;
-      letter-spacing: -0.045em;
-      max-width: 11ch;
-      opacity: 0;
-      animation: rise 0.8s var(--ease) forwards 0.22s;
-    }
-    .brand em {
-      font-style: normal;
-      color: var(--acid);
-    }
-
-    .lede {
-      margin-top: 1.35rem;
-      max-width: 32rem;
-      font-size: clamp(1.05rem, 2vw, 1.2rem);
-      color: rgba(220, 232, 224, 0.82);
-      opacity: 0;
-      animation: rise 0.8s var(--ease) forwards 0.4s;
-    }
-
-    .cta-row {
-      margin-top: 2rem;
+      z-index: 40;
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem;
-      opacity: 0;
-      animation: rise 0.8s var(--ease) forwards 0.55s;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      padding: 14px max(14px, calc((100% - min(1080px, 100% - 28px)) / 2));
+      background: var(--bg-metal);
+      border-bottom: 3px solid var(--bg-metal);
+      box-shadow: 0 3px 0 var(--accent-copper);
+      overflow-x: hidden;
+    }
+
+    .hud-brand {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui);
+      line-height: 1.5;
+      color: var(--accent-cream);
+      text-decoration: none;
+      text-shadow: 2px 2px 0 #000;
+      letter-spacing: var(--display-spacing);
+      text-transform: uppercase;
+    }
+    .hud-brand span { color: var(--accent-copper); }
+
+    .hud-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      list-style: none;
+    }
+    .hud-links a {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--sidebar-muted);
+      text-decoration: none;
+      padding: 12px 12px;
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      border: 3px solid transparent;
+    }
+    .hud-links a:hover {
+      color: var(--sidebar-text);
+      background: var(--sidebar-hover);
+      border-color: var(--border-subtle);
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.45rem;
+      gap: 8px;
       min-height: 48px;
-      padding: 0.75rem 1.35rem;
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.88rem;
-      letter-spacing: -0.01em;
+      padding: 12px 16px;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui-sm);
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: var(--display-spacing);
       text-decoration: none;
-      border: none;
+      border: 3px solid var(--bg-metal);
+      border-radius: 0;
       cursor: pointer;
       touch-action: manipulation;
-      transition: transform 0.2s var(--ease), background 0.2s, color 0.2s, border-color 0.2s;
+      box-shadow: 4px 4px 0 rgba(4, 12, 24, .9);
+      transition: transform 0.05s, box-shadow 0.05s;
+      image-rendering: pixelated;
     }
-    .btn:hover { transform: translateY(-2px); }
-    .btn:active { transform: translateY(0); }
-
+    .btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: 1px 1px 0 var(--bg-metal);
+    }
     .btn-primary {
-      background: var(--acid);
-      color: var(--ink);
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      font-weight: 700;
     }
-    .btn-primary:hover { background: #d4ff5c; }
+    .btn-primary:hover { background: #ff9438; }
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent-cream);
+      color: var(--accent-cream);
+    }
+    .btn.ok {
+      background: var(--state-success);
+      color: var(--accent-ink);
+    }
 
-    .btn-ghost {
-      background: transparent;
-      color: #e8f0ea;
-      border: 1px solid rgba(232, 240, 234, 0.35);
+    .btn-star {
+      background: var(--accent-cream);
+      color: var(--accent-ink);
+      gap: 10px;
     }
-    .btn-ghost:hover {
-      border-color: var(--acid);
-      color: var(--acid);
+    .btn-star:hover { background: #ffe09a; }
+    .btn-star .star-icon {
+      display: inline-block;
+      font-size: 1.15em;
+      line-height: 1;
+      animation: twinkle 1.2s steps(2) infinite;
+    }
+    .btn-star.is-done {
+      background: var(--state-success);
+    }
+    .btn-star .star-count {
+      font-variant-numeric: tabular-nums;
+      opacity: 0.85;
+    }
+    .btn-star .star-count:empty,
+    .btn-star .star-count.is-loading::after {
+      content: "…";
     }
 
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes twinkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.08); }
+    }
+
+    .hud-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%) translateY(20px);
+      z-index: 80;
+      max-width: min(420px, calc(100% - 40px));
+      width: max-content;
+      box-sizing: border-box;
+      padding: 14px 16px;
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      border: 3px solid var(--bg-metal);
+      box-shadow: var(--shadow-panel);
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.6;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .toast.is-on {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* —— Hero panel —— */
+    .hero {
+      margin-top: 28px;
+      background: var(--bg-paper);
+      border: 3px solid var(--bg-metal);
+      box-shadow: var(--shadow-panel);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-scan {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, .035) 0 1px,
+        transparent 1px 3px
+      );
+      opacity: 0.7;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      opacity: 0.35;
+      background-image:
+        linear-gradient(rgba(242, 200, 121, 0.12) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(242, 200, 121, 0.12) 2px, transparent 2px);
+      background-size: 24px 24px;
+      image-rendering: pixelated;
+      animation: scroll-grid 8s steps(8) infinite;
+    }
+
+    @keyframes scroll-grid {
+      from { background-position: 0 0; }
+      to { background-position: 0 24px; }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      padding: clamp(20px, 4vw, 36px);
+    }
+
+    .pixel-badge {
+      display: inline-block;
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      border: 3px solid var(--bg-metal);
+      box-shadow: 4px 4px 0 var(--bg-metal);
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.55;
+      padding: 10px 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-h1);
+      line-height: 1.45;
+      color: var(--text-primary);
+      text-shadow: 3px 3px 0 var(--bg-metal);
+      text-transform: uppercase;
+      letter-spacing: var(--display-spacing);
+      max-width: 12ch;
+    }
+    .brand em {
+      font-style: normal;
+      color: var(--accent-copper);
+    }
+
+    .lede {
+      margin-top: 18px;
+      max-width: 38rem;
+      color: var(--text-secondary);
+      font-size: 20px;
+      line-height: 1.5;
+    }
+
+    .cta-row {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hp-bar {
+      margin-top: 28px;
+      display: grid;
+      gap: 6px;
+      max-width: 320px;
+    }
+    .hp-label {
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      color: var(--accent-cream);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .hp-track {
+      height: 16px;
+      background: var(--bg-metal);
+      border: 3px solid var(--bg-metal);
+      box-shadow: inset 0 0 0 2px var(--border-subtle);
+      image-rendering: pixelated;
+    }
+    .hp-fill {
+      height: 100%;
+      width: 100%;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--accent-copper) 0 10px,
+        var(--accent-copper-deep) 10px 12px
+      );
+      animation: hp-pulse 1.4s steps(2) infinite;
+    }
+    @keyframes hp-pulse {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.15); }
     }
 
     /* —— Sections —— */
-    section {
-      padding: var(--space-8) 0 var(--space-6);
-    }
+    section { padding: 40px 0 8px; }
 
-    .section-head {
-      display: grid;
-      gap: 0.55rem;
-      margin-bottom: var(--space-6);
-      max-width: 38rem;
-    }
-
+    .section-head { margin-bottom: 18px; max-width: 40rem; }
     .eyebrow {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.14em;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.55;
+      color: var(--accent-cream);
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--teal);
+      margin-bottom: 12px;
     }
-
     h2 {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: clamp(1.75rem, 3.8vw, 2.45rem);
-      letter-spacing: -0.035em;
-      line-height: 1.12;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-h2);
+      line-height: 1.5;
+      color: var(--text-primary);
+      text-shadow: 2px 2px 0 var(--bg-metal);
+      text-transform: uppercase;
+      letter-spacing: var(--display-spacing);
     }
-
     .section-head p {
-      color: var(--ink-muted);
-      font-size: 1.05rem;
+      margin-top: 12px;
+      color: var(--text-muted);
+      font-size: var(--fs-body);
     }
 
-    /* Toolbar: search + filters (interactive) */
+    /* Toolbar */
     .toolbar {
       display: flex;
       flex-wrap: wrap;
-      gap: var(--space-3);
-      align-items: center;
-      margin-bottom: var(--space-5);
+      gap: 10px;
+      align-items: stretch;
+      margin-bottom: 16px;
     }
 
     .search {
-      flex: 1 1 220px;
+      flex: 1 1 200px;
       position: relative;
-      min-width: 0;
-    }
-    .search svg {
-      position: absolute;
-      left: 0.9rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
-      color: var(--ink-muted);
-      pointer-events: none;
     }
     .search input {
       width: 100%;
-      min-height: 48px;
-      padding: 0.7rem 1rem 0.7rem 2.75rem;
-      border: 1px solid var(--line);
-      background: var(--surface);
+      min-height: 52px;
+      padding: 12px 14px 12px 44px;
+      border: 3px solid var(--bg-metal);
+      border-radius: 0;
+      background: var(--bg-surface);
+      color: var(--text-primary);
       font-family: var(--font-body);
-      font-size: 1rem;
-      color: var(--ink);
-      border-radius: var(--radius);
+      font-size: var(--fs-body);
+      box-shadow: var(--shadow-soft);
     }
-    .search input::placeholder { color: #8a94a0; }
+    .search input::placeholder { color: var(--text-muted); }
+    .search-ico {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      image-rendering: pixelated;
+      background:
+        linear-gradient(var(--accent-cream), var(--accent-cream)) 0 0 / 10px 10px no-repeat,
+        linear-gradient(var(--accent-cream), var(--accent-cream)) 10px 10px / 4px 4px no-repeat;
+      opacity: 0.85;
+      pointer-events: none;
+    }
 
     .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
+      gap: 6px;
     }
 
     .chip {
-      min-height: 44px;
-      padding: 0.45rem 0.9rem;
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.02em;
-      background: transparent;
-      color: var(--ink-muted);
-      border: 1px solid var(--line);
+      min-height: 48px;
+      padding: 10px 14px;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      border: 3px solid var(--bg-metal);
+      box-shadow: 3px 3px 0 rgba(4, 12, 24, .85);
       cursor: pointer;
       touch-action: manipulation;
-      transition: background 0.2s, color 0.2s, border-color 0.2s;
     }
-    .chip:hover { border-color: var(--ink); color: var(--ink); }
+    .chip:hover { color: var(--text-primary); }
+    .chip:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--bg-metal);
+    }
     .chip[aria-pressed="true"] {
-      background: var(--forest);
-      border-color: var(--forest);
-      color: var(--acid);
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      box-shadow: inset 0 0 0 2px var(--accent-cream), 3px 3px 0 var(--bg-metal);
     }
 
     .count-pill {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--ink-muted);
-      margin-left: auto;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      color: var(--sidebar-muted);
+      align-self: center;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
 
-    /* Skill rows */
-    .skill-list { border-top: 1px solid var(--line); }
+    /* Skill panels */
+    .panel {
+      background: var(--bg-surface);
+      border: 3px solid var(--bg-metal);
+      box-shadow: var(--shadow-panel);
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    .skill-list { border-top: 3px solid var(--bg-metal); }
 
     .skill {
       display: grid;
-      grid-template-columns: minmax(9rem, 15rem) 1fr minmax(8rem, 13rem) auto;
-      gap: 0.85rem 1.25rem;
+      grid-template-columns: minmax(0, 14rem) minmax(0, 1fr) minmax(0, 12rem) auto;
+      gap: 8px 12px;
       align-items: center;
-      padding: 1.05rem 0.35rem;
-      border-bottom: 1px solid var(--line-soft);
-      transition: background 0.2s var(--ease);
+      padding: 14px 12px;
+      border-bottom: 3px solid var(--bg-metal);
+      background: var(--bg-surface);
+      transition: background 0.05s;
+      min-width: 0;
+      max-width: 100%;
     }
-    .skill:hover { background: color-mix(in srgb, var(--acid) 8%, transparent); }
-
+    .skill:nth-child(even) { background: var(--bg-elevated); }
+    .skill:hover {
+      background: var(--sidebar-hover);
+      box-shadow: inset 4px 0 0 var(--accent-cream);
+    }
     .skill.is-hidden { display: none; }
 
     .skill-name {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.98rem;
-      letter-spacing: -0.02em;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui-sm);
+      line-height: 1.55;
+      letter-spacing: 0.02em;
+      word-break: break-word;
     }
     .skill-name a {
-      color: inherit;
+      color: var(--accent-cream);
       text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.2s, color 0.2s;
     }
-    .skill-name a:hover {
-      color: var(--teal);
-      border-bottom-color: var(--teal);
-    }
+    .skill-name a:hover { color: var(--accent-copper); }
 
-    .skill-desc { color: var(--ink-muted); font-size: 0.98rem; }
-
+    .skill-desc { color: var(--text-secondary); font-size: var(--fs-body); line-height: 1.35; }
     .skill-trigger {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: #6b7684;
-      line-height: 1.4;
+      color: var(--text-muted);
+      font-size: var(--fs-body-sm);
+      line-height: 1.35;
     }
 
     .skill-copy {
-      min-width: 44px;
-      min-height: 44px;
-      padding: 0 0.75rem;
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      color: var(--ink);
+      min-width: 56px;
+      min-height: 48px;
+      padding: 0 12px;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.5;
+      text-transform: uppercase;
+      background: var(--bg-paper);
+      color: var(--text-primary);
+      border: 3px solid var(--bg-metal);
+      box-shadow: 3px 3px 0 rgba(4, 12, 24, .9);
       cursor: pointer;
       touch-action: manipulation;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
     }
     .skill-copy:hover {
-      border-color: var(--forest);
-      background: var(--forest);
-      color: var(--acid);
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+    }
+    .skill-copy:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--bg-metal);
     }
     .skill-copy.ok {
-      background: var(--ok);
-      border-color: var(--ok);
-      color: #fff;
+      background: var(--state-success);
+      color: var(--accent-ink);
     }
 
     .domain-block {
-      margin-bottom: var(--space-7);
-      scroll-margin-top: 5rem;
+      margin-bottom: 28px;
+      scroll-margin-top: 72px;
     }
-
     .domain-title {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 1.2rem;
-      letter-spacing: -0.02em;
-      margin: 0 0 0.85rem;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui);
+      line-height: 1.55;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--sidebar-text);
+      margin: 0 0 12px;
       display: flex;
       align-items: center;
-      gap: 0.7rem;
+      gap: 10px;
     }
     .domain-title::before {
       content: "";
-      width: 10px;
-      height: 10px;
-      background: var(--acid);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--acid) 30%, transparent);
+      width: 12px;
+      height: 12px;
+      background: var(--accent-copper);
+      border: 2px solid var(--bg-metal);
+      box-shadow: 2px 2px 0 var(--bg-metal);
+      image-rendering: pixelated;
     }
 
     .empty {
       display: none;
-      padding: 2.5rem 1rem;
+      padding: 28px 14px;
       text-align: center;
-      color: var(--ink-muted);
-      border: 1px dashed var(--line);
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
+      color: var(--text-muted);
+      border: 3px dashed var(--border-subtle);
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui-sm);
+      line-height: 1.7;
+      background: var(--bg-paper);
     }
     .empty.is-visible { display: block; }
 
     /* Install */
     .install-panel {
+      background: var(--bg-paper);
+      border: 3px solid var(--bg-metal);
+      box-shadow: var(--shadow-panel);
+      padding: clamp(16px, 3vw, 28px);
       position: relative;
-      overflow: hidden;
-      background: var(--forest);
-      color: #dce8e0;
-      padding: clamp(1.5rem, 4vw, 2.75rem);
+      max-width: 100%;
+      overflow-x: hidden;
     }
-    .install-panel::after {
+    .install-panel::before {
       content: "";
       position: absolute;
-      right: -10%;
-      top: -20%;
-      width: 55%;
-      height: 80%;
-      background: radial-gradient(circle, rgba(200, 245, 66, 0.2), transparent 65%);
+      inset: 0;
       pointer-events: none;
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, .03) 0 1px,
+        transparent 1px 3px
+      );
     }
 
     .install-title {
       position: relative;
       z-index: 1;
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 1.15rem;
-      letter-spacing: -0.02em;
-      color: #fff;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-ui);
+      line-height: 1.55;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-cream);
+      text-shadow: 2px 2px 0 #000;
     }
-    .install-title + .install-title { margin-top: 2rem; }
+    .install-title + .install-title { margin-top: 24px; }
 
     .cmd {
       position: relative;
@@ -579,141 +758,154 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0.75rem;
-      margin-top: 1rem;
-      padding: 1rem 1.1rem;
-      background: rgba(0, 0, 0, 0.32);
-      border-left: 3px solid var(--acid);
-      font-family: var(--font-mono);
-      font-size: clamp(0.75rem, 1.7vw, 0.88rem);
+      gap: 10px;
+      margin-top: 12px;
+      padding: 14px;
+      background: var(--bg-metal);
+      border: 3px solid var(--border-subtle);
+      border-left: 6px solid var(--accent-copper);
+      font-family: "Fusion Pixel", var(--font-pixel), monospace;
+      font-size: var(--fs-body);
+      line-height: 1.5;
+      -webkit-font-smoothing: none;
+      font-smooth: never;
     }
     .cmd code {
       flex: 1;
       min-width: 0;
-      color: #eef6f0;
+      color: var(--text-primary);
       word-break: break-all;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
     }
-
-    .copy {
-      flex-shrink: 0;
-      min-height: 44px;
-      min-width: 72px;
-      padding: 0.5rem 0.95rem;
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.78rem;
-      background: var(--acid);
-      color: var(--ink);
-      border: none;
-      cursor: pointer;
-      touch-action: manipulation;
-      transition: background 0.2s, transform 0.15s;
-    }
-    .copy:hover { background: #d4ff5c; }
-    .copy.ok { background: var(--ok); color: #fff; }
 
     .cmd-grid {
       position: relative;
       z-index: 1;
       display: grid;
-      gap: 0.15rem;
-      margin-top: 1rem;
+      gap: 0;
+      margin-top: 12px;
+      border: 3px solid var(--bg-metal);
     }
 
     .cmd-row {
       display: grid;
-      grid-template-columns: minmax(7rem, 11rem) 1fr auto;
-      gap: 0.5rem 1rem;
+      grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) auto;
+      gap: 8px 10px;
       align-items: center;
-      padding: 0.65rem 0;
-      border-bottom: 1px solid rgba(220, 232, 224, 0.12);
-      font-family: var(--font-mono);
-      font-size: 0.74rem;
+      padding: 12px 14px;
+      border-bottom: 3px solid var(--bg-metal);
+      background: var(--bg-surface);
+      font-family: "Fusion Pixel", var(--font-pixel), monospace;
+      font-size: var(--fs-body-sm);
+      line-height: 1.5;
+      -webkit-font-smoothing: none;
+      font-smooth: never;
+      min-width: 0;
+      max-width: 100%;
     }
-    .cmd-row > span:first-child { color: rgba(200, 245, 66, 0.9); }
+    .cmd-row:nth-child(even) { background: var(--bg-elevated); }
+    .cmd-row:last-child { border-bottom: none; }
+    .cmd-row > span:first-child {
+      font-family: "Fusion Pixel", var(--font-pixel), monospace;
+      font-size: var(--fs-label);
+      color: var(--accent-copper);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.55;
+      word-break: break-word;
+      min-width: 0;
+    }
     .cmd-row code {
-      color: rgba(220, 232, 224, 0.85);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      color: var(--text-secondary);
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: break-all;
+      white-space: normal;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
     }
 
     .tips {
-      margin-top: var(--space-6);
-      display: grid;
-      gap: 0.9rem;
-      counter-reset: tip;
+      margin-top: 24px;
       list-style: none;
+      display: grid;
+      gap: 10px;
+      counter-reset: tip;
     }
     .tips li {
       position: relative;
-      padding-left: 2.75rem;
-      color: var(--ink-muted);
+      padding: 12px 12px 12px 56px;
+      background: var(--bg-surface);
+      border: 3px solid var(--bg-metal);
+      box-shadow: var(--shadow-soft);
+      color: var(--text-secondary);
+      font-size: var(--fs-body);
+      line-height: 1.4;
     }
     .tips li::before {
       counter-increment: tip;
       content: counter(tip, decimal-leading-zero);
       position: absolute;
-      left: 0;
-      top: 0.05rem;
-      width: 2rem;
-      height: 2rem;
+      left: 10px;
+      top: 12px;
+      width: 40px;
+      height: 40px;
       display: grid;
       place-items: center;
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      background: var(--forest);
-      color: var(--acid);
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      background: var(--accent-copper);
+      color: var(--accent-ink);
+      border: 3px solid var(--bg-metal);
+      box-shadow: 2px 2px 0 var(--bg-metal);
     }
     .tips code {
-      font-family: var(--font-mono);
-      font-size: 0.85em;
-      background: color-mix(in srgb, var(--acid) 18%, transparent);
-      padding: 0.1em 0.35em;
+      font-family: "Fusion Pixel", var(--font-pixel), monospace;
+      background: var(--bg-metal);
+      color: var(--accent-cream);
+      padding: 0 6px;
+      border: 2px solid var(--border-subtle);
+      font-size: inherit;
     }
 
     .live {
       position: absolute;
       width: 1px;
       height: 1px;
-      padding: 0;
-      margin: -1px;
       overflow: hidden;
       clip: rect(0, 0, 0, 0);
-      border: 0;
     }
 
     footer {
-      margin-top: var(--space-6);
-      padding: var(--space-5) 0 var(--space-7);
-      border-top: 1px solid var(--line);
+      margin-top: 36px;
+      padding-top: 16px;
+      border-top: 3px solid var(--bg-metal);
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      gap: var(--space-3);
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--ink-muted);
+      gap: 10px;
+      font-family: var(--font-pixel);
+      font-size: var(--fs-label);
+      line-height: 1.7;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
     footer a {
-      color: var(--teal);
+      color: var(--accent-copper);
       text-decoration: none;
     }
-    footer a:hover { text-decoration: underline; }
+    footer a:hover { color: var(--accent-cream); }
 
-    .reveal {
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
-    }
-    .reveal.is-in { opacity: 1; transform: none; }
-
-    @media (max-width: 900px) {
+    @media (max-width: 860px) {
       .skill {
         grid-template-columns: 1fr auto;
-        gap: 0.4rem 0.75rem;
       }
-      .skill-desc { grid-column: 1 / -1; }
+      .skill-desc,
       .skill-trigger { grid-column: 1 / -1; }
       .cmd-row {
         grid-template-columns: 1fr auto;
@@ -724,90 +916,67 @@
       }
     }
 
-    @media (max-width: 720px) {
-      .nav-links,
-      .nav-gh { display: none; }
-      .nav.is-open .nav-links {
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 100%;
-        background: var(--surface);
-        border-bottom: 1px solid var(--line);
-        padding: 0.5rem 1rem 1rem;
-        align-items: stretch;
+    @media (max-width: 640px) {
+      :root[data-theme="loki-8bit"] {
+        --fs-body: 20px;
+        --fs-body-sm: 18px;
+        --fs-ui: 13px;
+        --fs-ui-sm: 12px;
+        --fs-label: 12px;
       }
-      .nav.is-open .nav-gh {
-        display: inline-flex;
-        margin: 0.5rem 1rem 1rem;
-        justify-content: center;
-      }
-      .nav-toggle { display: inline-flex; }
-      .nav { flex-wrap: wrap; }
-      .count-pill { margin-left: 0; width: 100%; }
+      .hud-links { width: 100%; }
+      .hud-links a { padding: 10px; }
     }
   </style>
 </head>
 <body>
   <a class="skip" href="#main">跳到主要内容</a>
 
-  <div class="page">
-    <nav class="nav" id="nav" aria-label="主导航">
-      <a class="nav-brand" href="#">AI <span>Skills</span></a>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="打开菜单">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path d="M4 7h16M4 12h16M4 17h16" />
-        </svg>
+  <header class="hud" aria-label="主导航">
+    <a class="hud-brand" href="#">AI·<span>SKILLS</span></a>
+    <ul class="hud-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#agents">Agents</a></li>
+      <li><a href="#install">Install</a></li>
+    </ul>
+    <div class="hud-actions">
+      <button type="button" class="btn btn-star js-star" aria-label="Star 本仓库">
+        <span class="star-icon" aria-hidden="true">★</span>
+        <span class="star-label">Star</span>
+        <span class="star-count is-loading" data-star-count></span>
       </button>
-      <ul class="nav-links" id="nav-menu">
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#agents">Agents</a></li>
-        <li><a href="#install">安装</a></li>
-      </ul>
-      <a class="nav-gh" href="https://github.com/maoyao0607/ai-skills" target="_blank" rel="noopener">GitHub ↗</a>
-    </nav>
+      <a class="btn btn-secondary" href="https://github.com/maoyao0607/ai-skills" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </header>
 
-    <header class="hero" aria-labelledby="brand-title">
-      <div class="hero-plane" aria-hidden="true"></div>
-      <svg class="hero-lattice" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <defs>
-          <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(200,245,66,0.12)" stroke-width="1" />
-          </pattern>
-        </defs>
-        <rect width="1200" height="800" fill="url(#grid)" />
-        <g fill="none" stroke="rgba(200,245,66,0.35)" stroke-width="1.2">
-          <rect x="680" y="120" width="160" height="100" />
-          <rect x="860" y="180" width="120" height="160" />
-          <rect x="740" y="280" width="200" height="80" />
-          <path d="M760 170 L860 220 M900 180 L900 280 M840 320 L940 320" />
-        </g>
-        <g fill="rgba(200,245,66,0.55)">
-          <circle cx="760" cy="170" r="4" />
-          <circle cx="860" cy="220" r="4" />
-          <circle cx="900" cy="280" r="4" />
-          <circle cx="940" cy="320" r="4" />
-        </g>
-        <text x="700" y="480" fill="rgba(232,240,234,0.15)" font-family="JetBrains Mono, monospace" font-size="14">SKILL_RACK // v1</text>
-      </svg>
-
+  <div class="wrap">
+    <section class="hero" aria-labelledby="brand-title">
+      <div class="hero-scan" aria-hidden="true"></div>
+      <div class="hero-grid" aria-hidden="true"></div>
       <div class="hero-inner">
-        <p class="hero-meta">maoyao0607 / ai-skills</p>
+        <div class="pixel-badge">maoyao0607 / ai-skills</div>
         <h1 class="brand" id="brand-title">AI <em>Skills</em></h1>
-        <p class="lede">把可安装的 Agent 能力做成目录：核心 Skills 与领域 Agents，覆盖需求、设计、开发、排查与测试。</p>
+        <p class="lede">通用 Agent Skills 集合：核心可安装技能与按业务领域归档的技能包，覆盖需求、设计、开发、排查与测试。</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="#install">一键安装</a>
-          <a class="btn btn-ghost" href="#skills">浏览目录</a>
+          <button type="button" class="btn btn-star js-star" aria-label="Star 本仓库">
+            <span class="star-icon" aria-hidden="true">★</span>
+            <span class="star-label">Star</span>
+            <span class="star-count is-loading" data-star-count></span>
+          </button>
+          <a class="btn btn-primary" href="#install">▶ 安装</a>
+          <a class="btn btn-secondary" href="#skills">◆ Skills 图鉴</a>
+        </div>
+        <div class="hp-bar" aria-hidden="true">
+          <div class="hp-label">LOAD · READY</div>
+          <div class="hp-track"><div class="hp-fill"></div></div>
         </div>
       </div>
-    </header>
+    </section>
 
     <main id="main">
-      <section id="skills" class="reveal" aria-labelledby="skills-heading">
+      <section id="skills" aria-labelledby="skills-heading">
         <div class="section-head">
-          <span class="eyebrow">Core · skills/</span>
+          <p class="eyebrow">Core · skills/</p>
           <h2 id="skills-heading">核心 Skills</h2>
           <p>按名安装即可触发。用搜索或筛选快速定位。</p>
         </div>
@@ -815,10 +984,8 @@
         <div class="toolbar">
           <label class="search">
             <span class="live">搜索 Skills</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" />
-            </svg>
-            <input type="search" id="q" placeholder="搜索名称、用途、触发词…" autocomplete="off" />
+            <span class="search-ico" aria-hidden="true"></span>
+            <input type="search" id="q" placeholder="搜索名称 / 用途 / 触发词…" autocomplete="off" />
           </label>
           <div class="filters" role="group" aria-label="按领域筛选">
             <button type="button" class="chip" data-filter="all" aria-pressed="true">全部</button>
@@ -832,13 +999,15 @@
           <p class="count-pill" id="visible-count" aria-live="polite"></p>
         </div>
 
-        <div class="skill-list" id="core-skills" data-domain="core"></div>
+        <div class="panel">
+          <div class="skill-list" id="core-skills" data-domain="core"></div>
+        </div>
         <p class="empty" id="empty-core" role="status">没有匹配的核心 Skill。</p>
       </section>
 
-      <section id="agents" class="reveal" aria-labelledby="agents-heading">
+      <section id="agents" aria-labelledby="agents-heading">
         <div class="section-head">
-          <span class="eyebrow">Domains · agents/</span>
+          <p class="eyebrow">Domains · agents/</p>
           <h2 id="agents-heading">领域 Agents</h2>
           <p>路径形如 agents/&lt;领域&gt;/skills/&lt;name&gt;/，可整包一句话安装。</p>
         </div>
@@ -846,24 +1015,24 @@
         <p class="empty" id="empty-agents" role="status">没有匹配的领域 Skill。</p>
       </section>
 
-      <section id="install" class="reveal" aria-labelledby="install-heading">
+      <section id="install" aria-labelledby="install-heading">
         <div class="section-head">
-          <span class="eyebrow">Install</span>
-          <h2 id="install-heading">安装</h2>
+          <p class="eyebrow">Install</p>
+          <h2 id="install-heading">安装命令</h2>
           <p>使用 skills.sh CLI。-g 全局安装，-y 跳过确认。</p>
         </div>
 
         <div class="install-panel">
-          <p class="install-title">安装全部核心 Skills</p>
+          <p class="install-title">▶ 安装全部核心</p>
           <div class="cmd">
             <code id="cmd-all">npx skills add maoyao0607/ai-skills -g -y</code>
-            <button type="button" class="copy" data-copy="cmd-all">复制</button>
+            <button type="button" class="btn btn-primary copy" data-copy="cmd-all">复制</button>
           </div>
 
-          <p class="install-title">按 skill 安装</p>
+          <p class="install-title">◆ 按 skill 安装</p>
           <div class="cmd-grid" id="cmd-per-skill"></div>
 
-          <p class="install-title">Agents 一句话（整行复制发给 Agent）</p>
+          <p class="install-title">★ Agents 一句话</p>
           <div class="cmd-grid" id="cmd-agents"></div>
         </div>
 
@@ -877,16 +1046,90 @@
     </main>
 
     <footer>
-      <span>AI Skills · GitHub Pages</span>
+      <div>AI Skills · GitHub Pages</div>
       <a href="https://github.com/maoyao0607/ai-skills">源码仓库</a>
     </footer>
   </div>
 
   <div class="live" id="copy-live" aria-live="polite"></div>
+  <div class="toast" id="star-toast" role="status" aria-live="polite"></div>
 
   <script>
     const REPO = "https://github.com/maoyao0607/ai-skills";
+    const REPO_API = "https://api.github.com/repos/maoyao0607/ai-skills";
     const BRANCH = "main";
+    const STAR_KEY = "ai-skills-star-clicked";
+
+    /* —— 一键 Star：打开仓库并引导点击 Star；展示实时 star 数 —— */
+    const starToast = document.getElementById("star-toast");
+    let starCount = null;
+
+    function formatCount(n) {
+      if (n == null || Number.isNaN(n)) return "";
+      if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "k";
+      return String(n);
+    }
+
+    function renderStarCount(n) {
+      document.querySelectorAll("[data-star-count]").forEach((el) => {
+        el.classList.remove("is-loading");
+        el.textContent = formatCount(n);
+      });
+    }
+
+    function markStarButtonsDone() {
+      document.querySelectorAll(".js-star").forEach((btn) => {
+        btn.classList.add("is-done");
+        const label = btn.querySelector(".star-label");
+        if (label && !label.dataset.original) {
+          label.dataset.original = label.textContent;
+          label.textContent = "已 Star?";
+        }
+      });
+    }
+
+    function showStarToast(msg) {
+      starToast.textContent = msg;
+      starToast.classList.add("is-on");
+      clearTimeout(showStarToast._t);
+      showStarToast._t = setTimeout(() => starToast.classList.remove("is-on"), 4200);
+    }
+
+    async function loadStarCount() {
+      try {
+        const res = await fetch(REPO_API, {
+          headers: { Accept: "application/vnd.github+json" },
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        const data = await res.json();
+        starCount = data.stargazers_count ?? 0;
+        renderStarCount(starCount);
+      } catch {
+        document.querySelectorAll("[data-star-count]").forEach((el) => {
+          el.classList.remove("is-loading");
+          el.textContent = "";
+        });
+      }
+    }
+
+    function starRepo() {
+      // GitHub 无法在静态站直接代点 Star；打开仓库页，登录用户可一键点 Star
+      window.open(REPO, "_blank", "noopener,noreferrer");
+      try { localStorage.setItem(STAR_KEY, "1"); } catch {}
+      markStarButtonsDone();
+      if (starCount != null) {
+        renderStarCount(starCount + 1);
+      }
+      showStarToast("已打开 GitHub：登录后点击右上角 ★ Star 即可");
+    }
+
+    document.querySelectorAll(".js-star").forEach((btn) => {
+      btn.addEventListener("click", starRepo);
+    });
+    try {
+      if (localStorage.getItem(STAR_KEY) === "1") markStarButtonsDone();
+    } catch {}
+    loadStarCount();
 
     const core = [
       ["requirement-extractor", "从 Word / Excel / PDF 抽取功能清单，可追溯出处", "功能清单、RFP、范围澄清"],
@@ -968,20 +1211,18 @@
     ];
 
     function skillHref(kind, pathParts) {
-      if (kind === "core") {
-        return `${REPO}/tree/${BRANCH}/skills/${pathParts[0]}`;
-      }
+      if (kind === "core") return `${REPO}/tree/${BRANCH}/skills/${pathParts[0]}`;
       return `${REPO}/tree/${BRANCH}/agents/${encodeURIComponent(pathParts[0])}/skills/${pathParts[1]}`;
     }
 
     function skillRow([name, desc, trigger], opts) {
-      const { domain, href, installCmd, copyLabel = "复制安装命令" } = opts;
+      const { domain, href, copyText, copyLabel = "复制安装命令" } = opts;
       const q = `${name} ${desc} ${trigger}`.toLowerCase();
       return `<article class="skill" data-domain="${domain}" data-q="${q.replace(/"/g, "&quot;")}">
         <div class="skill-name"><a href="${href}" target="_blank" rel="noopener">${name}</a></div>
         <div class="skill-desc">${desc}</div>
         <div class="skill-trigger">${trigger}</div>
-        <button type="button" class="skill-copy" data-text="${installCmd.replace(/"/g, "&quot;")}" title="${copyLabel}" aria-label="${copyLabel}：${name}">复制</button>
+        <button type="button" class="skill-copy" data-text="${copyText.replace(/"/g, "&quot;")}" title="${copyLabel}" aria-label="${copyLabel}：${name}">复制</button>
       </article>`;
     }
 
@@ -989,22 +1230,24 @@
       skillRow(item, {
         domain: "core",
         href: skillHref("core", [item[0]]),
-        installCmd: `npx skills add maoyao0607/ai-skills@${item[0]} -g -y`,
+        copyText: `npx skills add maoyao0607/ai-skills@${item[0]} -g -y`,
       })
     ).join("");
 
     document.getElementById("agent-domains").innerHTML = domains.map((d) => `
       <div class="domain-block" data-domain-block="${d.filter}">
         <h3 class="domain-title">${d.name}</h3>
-        <div class="skill-list">${d.items.map((item) => {
-          const href = skillHref("agent", [d.path, item[0]]);
-          return skillRow(item, {
-            domain: d.filter,
-            href,
-            installCmd: href,
-            copyLabel: "复制仓库链接",
-          });
-        }).join("")}</div>
+        <div class="panel">
+          <div class="skill-list">${d.items.map((item) => {
+            const href = skillHref("agent", [d.path, item[0]]);
+            return skillRow(item, {
+              domain: d.filter,
+              href,
+              copyText: href,
+              copyLabel: "复制仓库链接",
+            });
+          }).join("")}</div>
+        </div>
       </div>
     `).join("");
 
@@ -1014,7 +1257,7 @@
       return `<div class="cmd-row">
         <span>${name}</span>
         <code id="${id}">${cmd}</code>
-        <button type="button" class="copy" data-copy="${id}">复制</button>
+        <button type="button" class="btn btn-primary copy" data-copy="${id}">复制</button>
       </div>`;
     }).join("");
 
@@ -1025,28 +1268,27 @@
       return `<div class="cmd-row">
         <span>${d.name}</span>
         <code id="${id}">${sentence}</code>
-        <button type="button" class="copy" data-copy="${id}">复制</button>
+        <button type="button" class="btn btn-primary copy" data-copy="${id}">复制</button>
       </div>`;
     }).join("");
 
-    /* Copy */
     const live = document.getElementById("copy-live");
     async function copyText(text, btn) {
       try {
         await navigator.clipboard.writeText(text.trim());
         const prev = btn.textContent;
-        btn.textContent = "已复制";
+        btn.textContent = "OK";
         btn.classList.add("ok");
         live.textContent = "已复制到剪贴板";
         setTimeout(() => {
           btn.textContent = prev;
           btn.classList.remove("ok");
           live.textContent = "";
-        }, 1400);
+        }, 1200);
       } catch {
-        btn.textContent = "失败";
-        live.textContent = "复制失败，请手动选择";
-        setTimeout(() => { btn.textContent = "复制"; live.textContent = ""; }, 1400);
+        btn.textContent = "ERR";
+        live.textContent = "复制失败";
+        setTimeout(() => { btn.textContent = "复制"; live.textContent = ""; }, 1200);
       }
     }
 
@@ -1061,7 +1303,6 @@
       if (skillCopy) copyText(skillCopy.dataset.text || "", skillCopy);
     });
 
-    /* Filter + search */
     let activeFilter = "all";
     const qInput = document.getElementById("q");
     const countEl = document.getElementById("visible-count");
@@ -1087,15 +1328,19 @@
       });
 
       const coreVisible = [...document.querySelectorAll("#core-skills .skill")].some((s) => !s.classList.contains("is-hidden"));
-      const showCoreSection = (activeFilter === "all" || activeFilter === "core") && (coreVisible || !q);
-      document.getElementById("empty-core").classList.toggle("is-visible", (activeFilter === "all" || activeFilter === "core") && !coreVisible);
-      document.getElementById("core-skills").hidden = !showCoreSection && activeFilter !== "core";
-      if (activeFilter === "core") document.getElementById("core-skills").hidden = false;
-
-      const anyAgent = [...document.querySelectorAll("#agent-domains .skill")].some((s) => !s.classList.contains("is-hidden"));
+      const coreWrap = document.querySelector("#core-skills")?.closest(".panel");
+      if (coreWrap) {
+        coreWrap.hidden = !((activeFilter === "all" || activeFilter === "core") && (coreVisible || !q));
+        if (activeFilter === "core") coreWrap.hidden = false;
+      }
+      document.getElementById("empty-core").classList.toggle(
+        "is-visible",
+        (activeFilter === "all" || activeFilter === "core") && !coreVisible
+      );
       document.getElementById("empty-agents").classList.toggle(
         "is-visible",
-        activeFilter !== "core" && !anyAgent
+        activeFilter !== "core" &&
+          ![...document.querySelectorAll("#agent-domains .skill")].some((s) => !s.classList.contains("is-hidden"))
       );
 
       countEl.textContent = `显示 ${visible} 项`;
@@ -1110,42 +1355,6 @@
     });
     qInput.addEventListener("input", applyFilter);
     applyFilter();
-
-    /* Nav */
-    const nav = document.getElementById("nav");
-    const toggle = nav.querySelector(".nav-toggle");
-    toggle.addEventListener("click", () => {
-      const open = nav.classList.toggle("is-open");
-      toggle.setAttribute("aria-expanded", String(open));
-      toggle.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
-    });
-    nav.querySelectorAll(".nav-links a").forEach((a) => {
-      a.addEventListener("click", () => {
-        nav.classList.remove("is-open");
-        toggle.setAttribute("aria-expanded", "false");
-      });
-    });
-    window.addEventListener("scroll", () => {
-      nav.classList.toggle("is-scrolled", window.scrollY > 12);
-    }, { passive: true });
-
-    /* Reveal */
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      document.querySelectorAll(".reveal").forEach((el) => el.classList.add("is-in"));
-    } else if ("IntersectionObserver" in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((en) => {
-          if (en.isIntersecting) {
-            en.target.classList.add("is-in");
-            io.unobserve(en.target);
-          }
-        });
-      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
-      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
-    } else {
-      document.querySelectorAll(".reveal").forEach((el) => el.classList.add("is-in"));
-    }
   </script>
 </body>
 </html>
