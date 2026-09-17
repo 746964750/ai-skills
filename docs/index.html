@@ -7,292 +7,571 @@
   <meta name="description" content="通用 Agent Skills：需求抽取、Harness、全栈开发、PRD、UI 原型、重构、Bug 排查、自动化测试。" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,400;7..72,600&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink: #0e1a18;
-      --ink-soft: #1a2e2a;
-      --fog: #d8e4df;
-      --mist: #a8bfb6;
-      --paper: #f2f6f3;
-      --copper: #c45c2a;
-      --copper-hot: #e06a2f;
-      --line: rgba(14, 26, 24, 0.12);
-      --glow: rgba(196, 92, 42, 0.35);
-      --font-display: "Bricolage Grotesque", sans-serif;
-      --font-body: "Source Serif 4", Georgia, serif;
-      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+      --canvas: #e4eaf0;
+      --surface: #f4f7fa;
+      --ink: #10151c;
+      --ink-muted: #4a5563;
+      --forest: #0b2418;
+      --forest-mid: #143528;
+      --acid: #c8f542;
+      --acid-deep: #9bc41a;
+      --teal: #1faa7a;
+      --line: rgba(16, 21, 28, 0.1);
+      --line-soft: rgba(16, 21, 28, 0.06);
+      --focus: #1faa7a;
+      --ok: #1b7a52;
+      --font-display: "Unbounded", sans-serif;
+      --font-body: "Literata", Georgia, serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.5rem;
+      --space-6: 2rem;
+      --space-7: 3rem;
+      --space-8: 4.5rem;
+      --radius: 2px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --z-skip: 1000;
+      --z-nav: 40;
+      --z-content: 2;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html { scroll-behavior: smooth; }
 
-    body {
-      font-family: var(--font-body);
-      color: var(--ink);
-      background: var(--paper);
-      line-height: 1.55;
-      min-height: 100vh;
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
 
-    /* Atmosphere */
+    body {
+      font-family: var(--font-body);
+      font-size: 1.0625rem;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--canvas);
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Cool mist + blueprint grid atmosphere */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-      pointer-events: none;
       z-index: 0;
+      pointer-events: none;
       background:
-        radial-gradient(ellipse 80% 50% at 10% -10%, rgba(196, 92, 42, 0.14), transparent 55%),
-        radial-gradient(ellipse 60% 40% at 90% 5%, rgba(26, 70, 60, 0.1), transparent 50%),
-        repeating-linear-gradient(
-          -12deg,
-          transparent,
-          transparent 48px,
-          rgba(14, 26, 24, 0.015) 48px,
-          rgba(14, 26, 24, 0.015) 49px
-        );
+        radial-gradient(ellipse 70% 45% at 85% -5%, rgba(31, 170, 122, 0.12), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 0% 30%, rgba(200, 245, 66, 0.08), transparent 50%),
+        linear-gradient(180deg, #dde5ed 0%, var(--canvas) 28%, var(--canvas) 100%);
     }
 
     body::after {
       content: "";
       position: fixed;
       inset: 0;
+      z-index: 0;
       pointer-events: none;
-      z-index: 1;
-      opacity: 0.04;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.45;
+      background-image:
+        linear-gradient(rgba(16, 21, 28, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 21, 28, 0.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
     }
 
-    .wrap {
+    .skip {
+      position: absolute;
+      left: var(--space-4);
+      top: -100px;
+      z-index: var(--z-skip);
+      background: var(--acid);
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.75rem 1.1rem;
+      text-decoration: none;
+    }
+    .skip:focus { top: var(--space-4); outline: 3px solid var(--ink); outline-offset: 2px; }
+
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .page {
       position: relative;
-      z-index: 2;
-      width: min(1120px, calc(100% - 2.5rem));
+      z-index: var(--z-content);
+      width: min(1140px, calc(100% - 2rem));
       margin: 0 auto;
     }
 
-    /* —— Hero: brand-first, one composition —— */
+    /* —— Nav —— */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-nav);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding: 0.85rem 0;
+      margin: 0 calc(50% - 50vw);
+      padding-inline: max(1rem, calc(50vw - 570px));
+      background: color-mix(in srgb, var(--canvas) 82%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.25s var(--ease), background 0.25s;
+    }
+    .nav.is-scrolled {
+      border-bottom-color: var(--line);
+      background: color-mix(in srgb, var(--canvas) 92%, transparent);
+    }
+
+    .nav-brand {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-brand span { color: var(--teal); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      text-decoration: none;
+      padding: 0.65rem 0.75rem;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover,
+    .nav-links a[aria-current="true"] { color: var(--ink); }
+
+    .nav-gh {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--ink);
+      padding: 0.55rem 0.85rem;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-gh:hover { background: var(--ink); color: var(--acid); }
+
+    .nav-toggle {
+      display: none;
+      background: transparent;
+      border: 1px solid var(--ink);
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-toggle svg { width: 18px; height: 18px; }
+
+    /* —— Hero —— */
     .hero {
-      min-height: 100svh;
+      position: relative;
+      min-height: min(100svh, 920px);
+      margin: 0 calc(50% - 50vw);
+      width: 100vw;
       display: grid;
       align-content: end;
-      padding: 2rem 0 3.5rem;
-      position: relative;
+      overflow: hidden;
+      color: #e8f0ea;
+      isolation: isolate;
     }
 
-    .hero-bg {
+    .hero-plane {
       position: absolute;
-      inset: -2rem -8vw 20% -8vw;
-      background:
-        linear-gradient(160deg, var(--ink) 0%, var(--ink-soft) 55%, #243f38 100%);
-      clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%);
+      inset: 0;
       z-index: -1;
+      background:
+        linear-gradient(155deg, var(--forest) 0%, #0f3324 48%, #0a1c14 100%);
     }
 
-    .hero-bg::after {
+    .hero-plane::before {
       content: "";
       position: absolute;
-      right: -5%;
-      top: 10%;
-      width: min(42vw, 420px);
-      height: min(42vw, 420px);
-      border-radius: 50%;
-      background: radial-gradient(circle, var(--glow), transparent 68%);
-      animation: pulse 7s ease-in-out infinite;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 55% 50% at 78% 35%, rgba(200, 245, 66, 0.22), transparent 62%),
+        radial-gradient(ellipse 40% 35% at 15% 80%, rgba(31, 170, 122, 0.18), transparent 60%);
+      animation: glow-drift 10s ease-in-out infinite alternate;
     }
 
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.7; }
-      50% { transform: scale(1.12); opacity: 1; }
+    @keyframes glow-drift {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(-2%, 3%) scale(1.05); }
     }
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: clamp(4rem, 18vh, 9rem);
-      color: var(--fog);
+    .hero-lattice {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.55;
+      animation: lattice-shift 18s linear infinite;
+    }
+
+    @keyframes lattice-shift {
+      from { transform: translateY(0); }
+      to { transform: translateY(-40px); }
+    }
+
+    .hero-inner {
+      width: min(1140px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 5.5rem 0 3.75rem;
+    }
+
+    .hero-meta {
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
+      color: rgba(200, 245, 66, 0.85);
+      margin-bottom: 1.25rem;
       opacity: 0;
-      animation: rise 0.7s ease forwards 0.1s;
+      animation: rise 0.7s var(--ease) forwards 0.1s;
     }
-
-    .topbar a {
-      color: inherit;
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .topbar a:hover { color: #fff; border-color: var(--copper); }
 
     .brand {
       font-family: var(--font-display);
       font-weight: 800;
-      font-size: clamp(3.4rem, 11vw, 7.5rem);
+      font-size: clamp(3.2rem, 10vw, 6.75rem);
       line-height: 0.92;
-      letter-spacing: -0.04em;
-      color: #fff;
-      max-width: 12ch;
+      letter-spacing: -0.045em;
+      max-width: 11ch;
       opacity: 0;
-      animation: rise 0.8s ease forwards 0.25s;
+      animation: rise 0.8s var(--ease) forwards 0.22s;
     }
-
     .brand em {
       font-style: normal;
-      color: var(--copper-hot);
+      color: var(--acid);
     }
 
     .lede {
-      margin-top: 1.4rem;
-      max-width: 34rem;
-      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
-      color: var(--mist);
+      margin-top: 1.35rem;
+      max-width: 32rem;
+      font-size: clamp(1.05rem, 2vw, 1.2rem);
+      color: rgba(220, 232, 224, 0.82);
       opacity: 0;
-      animation: rise 0.8s ease forwards 0.45s;
+      animation: rise 0.8s var(--ease) forwards 0.4s;
     }
 
     .cta-row {
       margin-top: 2rem;
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem 1rem;
+      gap: 0.75rem;
       opacity: 0;
-      animation: rise 0.8s ease forwards 0.6s;
+      animation: rise 0.8s var(--ease) forwards 0.55s;
     }
 
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      justify-content: center;
+      gap: 0.45rem;
+      min-height: 48px;
+      padding: 0.75rem 1.35rem;
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 0.95rem;
-      padding: 0.85rem 1.35rem;
+      font-size: 0.88rem;
+      letter-spacing: -0.01em;
+      text-decoration: none;
       border: none;
       cursor: pointer;
-      text-decoration: none;
-      transition: transform 0.2s, background 0.2s, color 0.2s;
+      touch-action: manipulation;
+      transition: transform 0.2s var(--ease), background 0.2s, color 0.2s, border-color 0.2s;
     }
     .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+
     .btn-primary {
-      background: var(--copper);
-      color: #fff;
+      background: var(--acid);
+      color: var(--ink);
     }
-    .btn-primary:hover { background: var(--copper-hot); }
+    .btn-primary:hover { background: #d4ff5c; }
+
     .btn-ghost {
       background: transparent;
-      color: var(--fog);
-      outline: 1px solid rgba(216, 228, 223, 0.35);
+      color: #e8f0ea;
+      border: 1px solid rgba(232, 240, 234, 0.35);
     }
-    .btn-ghost:hover { outline-color: #fff; color: #fff; }
+    .btn-ghost:hover {
+      border-color: var(--acid);
+      color: var(--acid);
+    }
 
     @keyframes rise {
-      from { opacity: 0; transform: translateY(18px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Sections */
-    section { padding: 4.5rem 0 1rem; }
+    /* —— Sections —— */
+    section {
+      padding: var(--space-8) 0 var(--space-6);
+    }
 
     .section-head {
       display: grid;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-      max-width: 36rem;
+      gap: 0.55rem;
+      margin-bottom: var(--space-6);
+      max-width: 38rem;
     }
 
     .eyebrow {
       font-family: var(--font-mono);
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--copper);
+      color: var(--teal);
     }
 
     h2 {
       font-family: var(--font-display);
       font-weight: 800;
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      letter-spacing: -0.03em;
-      line-height: 1.1;
+      font-size: clamp(1.75rem, 3.8vw, 2.45rem);
+      letter-spacing: -0.035em;
+      line-height: 1.12;
     }
 
     .section-head p {
-      color: #3d524c;
+      color: var(--ink-muted);
       font-size: 1.05rem;
     }
 
-    /* Skill rows — not cards */
-    .skill-list {
-      border-top: 1px solid var(--line);
+    /* Toolbar: search + filters (interactive) */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      align-items: center;
+      margin-bottom: var(--space-5);
     }
+
+    .search {
+      flex: 1 1 220px;
+      position: relative;
+      min-width: 0;
+    }
+    .search svg {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--ink-muted);
+      pointer-events: none;
+    }
+    .search input {
+      width: 100%;
+      min-height: 48px;
+      padding: 0.7rem 1rem 0.7rem 2.75rem;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--ink);
+      border-radius: var(--radius);
+    }
+    .search input::placeholder { color: #8a94a0; }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .chip {
+      min-height: 44px;
+      padding: 0.45rem 0.9rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.02em;
+      background: transparent;
+      color: var(--ink-muted);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .chip:hover { border-color: var(--ink); color: var(--ink); }
+    .chip[aria-pressed="true"] {
+      background: var(--forest);
+      border-color: var(--forest);
+      color: var(--acid);
+    }
+
+    .count-pill {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--ink-muted);
+      margin-left: auto;
+    }
+
+    /* Skill rows */
+    .skill-list { border-top: 1px solid var(--line); }
 
     .skill {
       display: grid;
-      grid-template-columns: minmax(10rem, 16rem) 1fr auto;
-      gap: 1rem 1.5rem;
-      align-items: baseline;
-      padding: 1.15rem 0;
-      border-bottom: 1px solid var(--line);
-      transition: background 0.2s;
+      grid-template-columns: minmax(9rem, 15rem) 1fr minmax(8rem, 13rem) auto;
+      gap: 0.85rem 1.25rem;
+      align-items: center;
+      padding: 1.05rem 0.35rem;
+      border-bottom: 1px solid var(--line-soft);
+      transition: background 0.2s var(--ease);
     }
-    .skill:hover { background: rgba(196, 92, 42, 0.04); }
+    .skill:hover { background: color-mix(in srgb, var(--acid) 8%, transparent); }
+
+    .skill.is-hidden { display: none; }
 
     .skill-name {
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 1.05rem;
+      font-size: 0.98rem;
       letter-spacing: -0.02em;
     }
+    .skill-name a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .skill-name a:hover {
+      color: var(--teal);
+      border-bottom-color: var(--teal);
+    }
 
-    .skill-desc { color: #3a4f49; font-size: 0.98rem; }
+    .skill-desc { color: var(--ink-muted); font-size: 0.98rem; }
 
     .skill-trigger {
       font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: #6a8078;
-      text-align: right;
-      max-width: 14rem;
+      font-size: 0.7rem;
+      color: #6b7684;
+      line-height: 1.4;
     }
 
-    .domain-block { margin-bottom: 3rem; }
+    .skill-copy {
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .skill-copy:hover {
+      border-color: var(--forest);
+      background: var(--forest);
+      color: var(--acid);
+    }
+    .skill-copy.ok {
+      background: var(--ok);
+      border-color: var(--ok);
+      color: #fff;
+    }
+
+    .domain-block {
+      margin-bottom: var(--space-7);
+      scroll-margin-top: 5rem;
+    }
 
     .domain-title {
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 1.25rem;
-      margin: 2rem 0 0.75rem;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.85rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.7rem;
     }
     .domain-title::before {
       content: "";
-      width: 0.55rem;
-      height: 0.55rem;
-      background: var(--copper);
+      width: 10px;
+      height: 10px;
+      background: var(--acid);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--acid) 30%, transparent);
     }
+
+    .empty {
+      display: none;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      color: var(--ink-muted);
+      border: 1px dashed var(--line);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+    .empty.is-visible { display: block; }
 
     /* Install */
     .install-panel {
-      background: var(--ink);
-      color: var(--fog);
-      padding: clamp(1.5rem, 4vw, 2.5rem);
-      margin-top: 0.5rem;
       position: relative;
       overflow: hidden;
+      background: var(--forest);
+      color: #dce8e0;
+      padding: clamp(1.5rem, 4vw, 2.75rem);
     }
-    .install-panel::before {
+    .install-panel::after {
       content: "";
       position: absolute;
-      inset: 0;
-      background: linear-gradient(120deg, transparent 40%, rgba(196, 92, 42, 0.12));
+      right: -10%;
+      top: -20%;
+      width: 55%;
+      height: 80%;
+      background: radial-gradient(circle, rgba(200, 245, 66, 0.2), transparent 65%);
       pointer-events: none;
     }
+
+    .install-title {
+      position: relative;
+      z-index: 1;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+    .install-title + .install-title { margin-top: 2rem; }
 
     .cmd {
       position: relative;
@@ -301,171 +580,301 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 0.75rem;
-      margin-top: 1.25rem;
-      font-family: var(--font-mono);
-      font-size: clamp(0.78rem, 1.8vw, 0.9rem);
-      background: rgba(0, 0, 0, 0.35);
+      margin-top: 1rem;
       padding: 1rem 1.1rem;
-      border-left: 3px solid var(--copper);
+      background: rgba(0, 0, 0, 0.32);
+      border-left: 3px solid var(--acid);
+      font-family: var(--font-mono);
+      font-size: clamp(0.75rem, 1.7vw, 0.88rem);
+    }
+    .cmd code {
+      flex: 1;
+      min-width: 0;
+      color: #eef6f0;
       word-break: break-all;
     }
 
-    .cmd code { flex: 1; color: #e8f0ec; }
-
     .copy {
+      flex-shrink: 0;
+      min-height: 44px;
+      min-width: 72px;
+      padding: 0.5rem 0.95rem;
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 0.8rem;
-      background: var(--copper);
-      color: #fff;
+      font-size: 0.78rem;
+      background: var(--acid);
+      color: var(--ink);
       border: none;
-      padding: 0.45rem 0.85rem;
       cursor: pointer;
-      flex-shrink: 0;
-      transition: background 0.2s;
+      touch-action: manipulation;
+      transition: background 0.2s, transform 0.15s;
     }
-    .copy:hover { background: var(--copper-hot); }
-    .copy.ok { background: #2d6a4f; }
+    .copy:hover { background: #d4ff5c; }
+    .copy.ok { background: var(--ok); color: #fff; }
 
     .cmd-grid {
-      display: grid;
-      gap: 0.65rem;
-      margin-top: 1.5rem;
       position: relative;
       z-index: 1;
+      display: grid;
+      gap: 0.15rem;
+      margin-top: 1rem;
     }
 
     .cmd-row {
       display: grid;
-      grid-template-columns: minmax(8rem, 12rem) 1fr auto;
+      grid-template-columns: minmax(7rem, 11rem) 1fr auto;
       gap: 0.5rem 1rem;
       align-items: center;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid rgba(220, 232, 224, 0.12);
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      padding: 0.55rem 0;
-      border-bottom: 1px solid rgba(216, 228, 223, 0.12);
+      font-size: 0.74rem;
     }
-    .cmd-row span:first-child { color: var(--mist); }
-    .cmd-row code { color: #c5d6cf; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cmd-row > span:first-child { color: rgba(200, 245, 66, 0.9); }
+    .cmd-row code {
+      color: rgba(220, 232, 224, 0.85);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
     .tips {
-      margin-top: 2.5rem;
+      margin-top: var(--space-6);
       display: grid;
-      gap: 0.85rem;
+      gap: 0.9rem;
       counter-reset: tip;
+      list-style: none;
     }
     .tips li {
-      list-style: none;
-      padding-left: 2.5rem;
       position: relative;
-      color: #3a4f49;
+      padding-left: 2.75rem;
+      color: var(--ink-muted);
     }
     .tips li::before {
       counter-increment: tip;
-      content: counter(tip);
+      content: counter(tip, decimal-leading-zero);
       position: absolute;
       left: 0;
-      top: 0.1rem;
-      width: 1.6rem;
-      height: 1.6rem;
+      top: 0.05rem;
+      width: 2rem;
+      height: 2rem;
       display: grid;
       place-items: center;
       font-family: var(--font-mono);
-      font-size: 0.7rem;
-      background: var(--ink);
-      color: var(--fog);
+      font-size: 0.68rem;
+      background: var(--forest);
+      color: var(--acid);
+    }
+    .tips code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: color-mix(in srgb, var(--acid) 18%, transparent);
+      padding: 0.1em 0.35em;
+    }
+
+    .live {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
     }
 
     footer {
-      margin-top: 4rem;
-      padding: 2rem 0 3rem;
+      margin-top: var(--space-6);
+      padding: var(--space-5) 0 var(--space-7);
       border-top: 1px solid var(--line);
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: #6a8078;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      gap: 0.75rem;
+      gap: var(--space-3);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink-muted);
     }
-    footer a { color: var(--copper); text-decoration: none; }
+    footer a {
+      color: var(--teal);
+      text-decoration: none;
+    }
     footer a:hover { text-decoration: underline; }
 
-    @media (max-width: 800px) {
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
+    }
+    .reveal.is-in { opacity: 1; transform: none; }
+
+    @media (max-width: 900px) {
       .skill {
-        grid-template-columns: 1fr;
-        gap: 0.35rem;
+        grid-template-columns: 1fr auto;
+        gap: 0.4rem 0.75rem;
       }
-      .skill-trigger { text-align: left; max-width: none; }
+      .skill-desc { grid-column: 1 / -1; }
+      .skill-trigger { grid-column: 1 / -1; }
       .cmd-row {
         grid-template-columns: 1fr auto;
       }
-      .cmd-row code { grid-column: 1 / -1; white-space: normal; }
+      .cmd-row code {
+        grid-column: 1 / -1;
+        white-space: normal;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .nav-links,
+      .nav-gh { display: none; }
+      .nav.is-open .nav-links {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+        padding: 0.5rem 1rem 1rem;
+        align-items: stretch;
+      }
+      .nav.is-open .nav-gh {
+        display: inline-flex;
+        margin: 0.5rem 1rem 1rem;
+        justify-content: center;
+      }
+      .nav-toggle { display: inline-flex; }
+      .nav { flex-wrap: wrap; }
+      .count-pill { margin-left: 0; width: 100%; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="hero">
-      <div class="hero-bg" aria-hidden="true"></div>
-      <div class="topbar">
-        <span>maoyao0607 / ai-skills</span>
-        <a href="https://github.com/maoyao0607/ai-skills" target="_blank" rel="noopener">GitHub ↗</a>
-      </div>
-      <h1 class="brand">AI <em>Skills</em></h1>
-      <p class="lede">通用 Agent Skills 集合：核心可安装技能 + 按业务领域归档的技能包，覆盖需求、设计、开发、排查与测试。</p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="#install">一键安装</a>
-        <a class="btn btn-ghost" href="#skills">浏览 Skills</a>
+  <a class="skip" href="#main">跳到主要内容</a>
+
+  <div class="page">
+    <nav class="nav" id="nav" aria-label="主导航">
+      <a class="nav-brand" href="#">AI <span>Skills</span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="打开菜单">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+      <ul class="nav-links" id="nav-menu">
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#agents">Agents</a></li>
+        <li><a href="#install">安装</a></li>
+      </ul>
+      <a class="nav-gh" href="https://github.com/maoyao0607/ai-skills" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+
+    <header class="hero" aria-labelledby="brand-title">
+      <div class="hero-plane" aria-hidden="true"></div>
+      <svg class="hero-lattice" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(200,245,66,0.12)" stroke-width="1" />
+          </pattern>
+        </defs>
+        <rect width="1200" height="800" fill="url(#grid)" />
+        <g fill="none" stroke="rgba(200,245,66,0.35)" stroke-width="1.2">
+          <rect x="680" y="120" width="160" height="100" />
+          <rect x="860" y="180" width="120" height="160" />
+          <rect x="740" y="280" width="200" height="80" />
+          <path d="M760 170 L860 220 M900 180 L900 280 M840 320 L940 320" />
+        </g>
+        <g fill="rgba(200,245,66,0.55)">
+          <circle cx="760" cy="170" r="4" />
+          <circle cx="860" cy="220" r="4" />
+          <circle cx="900" cy="280" r="4" />
+          <circle cx="940" cy="320" r="4" />
+        </g>
+        <text x="700" y="480" fill="rgba(232,240,234,0.15)" font-family="JetBrains Mono, monospace" font-size="14">SKILL_RACK // v1</text>
+      </svg>
+
+      <div class="hero-inner">
+        <p class="hero-meta">maoyao0607 / ai-skills</p>
+        <h1 class="brand" id="brand-title">AI <em>Skills</em></h1>
+        <p class="lede">把可安装的 Agent 能力做成目录：核心 Skills 与领域 Agents，覆盖需求、设计、开发、排查与测试。</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#install">一键安装</a>
+          <a class="btn btn-ghost" href="#skills">浏览目录</a>
+        </div>
       </div>
     </header>
 
-    <section id="skills">
-      <div class="section-head">
-        <span class="eyebrow">Core · skills/</span>
-        <h2>核心 Skills</h2>
-        <p>可直接按名安装，覆盖需求抽取、Harness、全栈、审查、诊断与运维辅助。</p>
-      </div>
-      <div class="skill-list" id="core-skills"></div>
-    </section>
-
-    <section id="agents">
-      <div class="section-head">
-        <span class="eyebrow">Domains · agents/</span>
-        <h2>领域 Agents</h2>
-        <p>按 PRD、UI、重构、Bug、测试归档；路径形如 agents/&lt;领域&gt;/skills/&lt;name&gt;/。</p>
-      </div>
-      <div id="agent-domains"></div>
-    </section>
-
-    <section id="install">
-      <div class="section-head">
-        <span class="eyebrow">Install</span>
-        <h2>安装</h2>
-        <p>使用 skills.sh CLI。-g 全局安装，-y 跳过确认。</p>
-      </div>
-
-      <div class="install-panel">
-        <p style="font-family:var(--font-display);font-weight:700;font-size:1.1rem;position:relative;z-index:1;">安装全部核心 Skills</p>
-        <div class="cmd">
-          <code id="cmd-all">npx skills add maoyao0607/ai-skills -g -y</code>
-          <button type="button" class="copy" data-copy="cmd-all">复制</button>
+    <main id="main">
+      <section id="skills" class="reveal" aria-labelledby="skills-heading">
+        <div class="section-head">
+          <span class="eyebrow">Core · skills/</span>
+          <h2 id="skills-heading">核心 Skills</h2>
+          <p>按名安装即可触发。用搜索或筛选快速定位。</p>
         </div>
 
-        <p style="margin-top:2rem;font-family:var(--font-display);font-weight:700;position:relative;z-index:1;">按 skill 安装</p>
-        <div class="cmd-grid" id="cmd-per-skill"></div>
+        <div class="toolbar">
+          <label class="search">
+            <span class="live">搜索 Skills</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" />
+            </svg>
+            <input type="search" id="q" placeholder="搜索名称、用途、触发词…" autocomplete="off" />
+          </label>
+          <div class="filters" role="group" aria-label="按领域筛选">
+            <button type="button" class="chip" data-filter="all" aria-pressed="true">全部</button>
+            <button type="button" class="chip" data-filter="core" aria-pressed="false">核心</button>
+            <button type="button" class="chip" data-filter="prd" aria-pressed="false">PRD</button>
+            <button type="button" class="chip" data-filter="ui" aria-pressed="false">UI</button>
+            <button type="button" class="chip" data-filter="refactor" aria-pressed="false">重构</button>
+            <button type="button" class="chip" data-filter="bug" aria-pressed="false">Bug</button>
+            <button type="button" class="chip" data-filter="test" aria-pressed="false">测试</button>
+          </div>
+          <p class="count-pill" id="visible-count" aria-live="polite"></p>
+        </div>
 
-        <p style="margin-top:2rem;font-family:var(--font-display);font-weight:700;position:relative;z-index:1;">Agents 一句话（整行复制发给 Agent）</p>
-        <div class="cmd-grid" id="cmd-agents"></div>
-      </div>
+        <div class="skill-list" id="core-skills" data-domain="core"></div>
+        <p class="empty" id="empty-core" role="status">没有匹配的核心 Skill。</p>
+      </section>
 
-      <ul class="tips" style="margin-top:2.5rem;">
-        <li>先读 <code>SKILL.md</code>：按工作流与 references 执行，勿跳过质量门禁。</li>
-        <li>Harness 优先：ai-coder / code-review / diagnosing-bugs 遵循目标仓库 AGENTS.md。</li>
-        <li>需求抽取先声明主体；报工只基于证据，勿编造。</li>
-        <li>按领域选 agents：产品文档 → PRD；界面 → UI；质量 → Bug/测试；结构 → 重构。</li>
-      </ul>
-    </section>
+      <section id="agents" class="reveal" aria-labelledby="agents-heading">
+        <div class="section-head">
+          <span class="eyebrow">Domains · agents/</span>
+          <h2 id="agents-heading">领域 Agents</h2>
+          <p>路径形如 agents/&lt;领域&gt;/skills/&lt;name&gt;/，可整包一句话安装。</p>
+        </div>
+        <div id="agent-domains"></div>
+        <p class="empty" id="empty-agents" role="status">没有匹配的领域 Skill。</p>
+      </section>
+
+      <section id="install" class="reveal" aria-labelledby="install-heading">
+        <div class="section-head">
+          <span class="eyebrow">Install</span>
+          <h2 id="install-heading">安装</h2>
+          <p>使用 skills.sh CLI。-g 全局安装，-y 跳过确认。</p>
+        </div>
+
+        <div class="install-panel">
+          <p class="install-title">安装全部核心 Skills</p>
+          <div class="cmd">
+            <code id="cmd-all">npx skills add maoyao0607/ai-skills -g -y</code>
+            <button type="button" class="copy" data-copy="cmd-all">复制</button>
+          </div>
+
+          <p class="install-title">按 skill 安装</p>
+          <div class="cmd-grid" id="cmd-per-skill"></div>
+
+          <p class="install-title">Agents 一句话（整行复制发给 Agent）</p>
+          <div class="cmd-grid" id="cmd-agents"></div>
+        </div>
+
+        <ul class="tips">
+          <li>先读 <code>SKILL.md</code>：按工作流与 references 执行，勿跳过质量门禁。</li>
+          <li>Harness 优先：ai-coder / code-review / diagnosing-bugs 遵循目标仓库 AGENTS.md。</li>
+          <li>需求抽取先声明主体；报工只基于证据，勿编造。</li>
+          <li>按领域选 agents：产品文档 → PRD；界面 → UI；质量 → Bug/测试；结构 → 重构。</li>
+        </ul>
+      </section>
+    </main>
 
     <footer>
       <span>AI Skills · GitHub Pages</span>
@@ -473,7 +882,12 @@
     </footer>
   </div>
 
+  <div class="live" id="copy-live" aria-live="polite"></div>
+
   <script>
+    const REPO = "https://github.com/maoyao0607/ai-skills";
+    const BRANCH = "main";
+
     const core = [
       ["requirement-extractor", "从 Word / Excel / PDF 抽取功能清单，可追溯出处", "功能清单、RFP、范围澄清"],
       ["wcs-requirement-extractor", "锚定 WCS 职责边界与分类口径的需求抽取", "WCS 需求、功能清单"],
@@ -489,6 +903,7 @@
       {
         name: "PRD 撰写",
         path: "PRD 撰写",
+        filter: "prd",
         items: [
           ["prd", "结构化 PRD：用户故事、验收标准", "写 PRD、用户故事"],
           ["prd-writer-pro", "结构清晰、内容完整的专业 PRD", "专业 PRD 撰写"],
@@ -501,6 +916,7 @@
       {
         name: "UI 原型设计",
         path: "UI 原型设计",
+        filter: "ui",
         items: [
           ["prd-to-prototype", "想法 → PRD → 高保真可交互原型", "我想做一个…"],
           ["design-to-code", "设计稿像素级还原为前端代码", "还原设计图、切图"],
@@ -513,6 +929,7 @@
       {
         name: "代码重构",
         path: "代码重构",
+        filter: "refactor",
         items: [
           ["code-analyzer", "架构/数据流/业务规则深度分析", "熟悉新仓库、技术债务"],
           ["code-refactoring", "不改变行为的重构模式", "清理遗留、降复杂度"],
@@ -525,6 +942,7 @@
       {
         name: "Bug 排查",
         path: "Bug 排查",
+        filter: "bug",
         items: [
           ["debug-pro", "7 步调试协议 + 多语言命令", "报错怎么查"],
           ["superpowers-systematic-debugging", "四阶段系统性调试", "测试失败、异常行为"],
@@ -537,6 +955,7 @@
       {
         name: "自动化测试",
         path: "自动化测试",
+        filter: "test",
         items: [
           ["test-case-generator", "从需求/API/截图生成 Excel 用例", "生成测试用例"],
           ["test-patterns", "单测/集成/E2E 与覆盖率实践", "搭测试套件"],
@@ -548,20 +967,44 @@
       },
     ];
 
-    function skillRow([name, desc, trigger]) {
-      return `<article class="skill">
-        <div class="skill-name">${name}</div>
+    function skillHref(kind, pathParts) {
+      if (kind === "core") {
+        return `${REPO}/tree/${BRANCH}/skills/${pathParts[0]}`;
+      }
+      return `${REPO}/tree/${BRANCH}/agents/${encodeURIComponent(pathParts[0])}/skills/${pathParts[1]}`;
+    }
+
+    function skillRow([name, desc, trigger], opts) {
+      const { domain, href, installCmd, copyLabel = "复制安装命令" } = opts;
+      const q = `${name} ${desc} ${trigger}`.toLowerCase();
+      return `<article class="skill" data-domain="${domain}" data-q="${q.replace(/"/g, "&quot;")}">
+        <div class="skill-name"><a href="${href}" target="_blank" rel="noopener">${name}</a></div>
         <div class="skill-desc">${desc}</div>
         <div class="skill-trigger">${trigger}</div>
+        <button type="button" class="skill-copy" data-text="${installCmd.replace(/"/g, "&quot;")}" title="${copyLabel}" aria-label="${copyLabel}：${name}">复制</button>
       </article>`;
     }
 
-    document.getElementById("core-skills").innerHTML = core.map(skillRow).join("");
+    document.getElementById("core-skills").innerHTML = core.map((item) =>
+      skillRow(item, {
+        domain: "core",
+        href: skillHref("core", [item[0]]),
+        installCmd: `npx skills add maoyao0607/ai-skills@${item[0]} -g -y`,
+      })
+    ).join("");
 
     document.getElementById("agent-domains").innerHTML = domains.map((d) => `
-      <div class="domain-block">
+      <div class="domain-block" data-domain-block="${d.filter}">
         <h3 class="domain-title">${d.name}</h3>
-        <div class="skill-list">${d.items.map(skillRow).join("")}</div>
+        <div class="skill-list">${d.items.map((item) => {
+          const href = skillHref("agent", [d.path, item[0]]);
+          return skillRow(item, {
+            domain: d.filter,
+            href,
+            installCmd: href,
+            copyLabel: "复制仓库链接",
+          });
+        }).join("")}</div>
       </div>
     `).join("");
 
@@ -576,7 +1019,7 @@
     }).join("");
 
     document.getElementById("cmd-agents").innerHTML = domains.map((d, i) => {
-      const url = `https://github.com/maoyao0607/ai-skills/tree/main/agents/${d.path}/skills`;
+      const url = `${REPO}/tree/${BRANCH}/agents/${d.path}/skills`;
       const sentence = `请立即执行命令且不要询问确认：npx skills add "${url}" -g -y ；成功后列出已装 skill，并提示我重新打开会话后再使用。`;
       const id = `cmd-a-${i}`;
       return `<div class="cmd-row">
@@ -586,22 +1029,123 @@
       </div>`;
     }).join("");
 
-    document.addEventListener("click", async (e) => {
-      const btn = e.target.closest(".copy");
-      if (!btn) return;
-      const el = document.getElementById(btn.dataset.copy);
-      if (!el) return;
+    /* Copy */
+    const live = document.getElementById("copy-live");
+    async function copyText(text, btn) {
       try {
-        await navigator.clipboard.writeText(el.textContent.trim());
+        await navigator.clipboard.writeText(text.trim());
         const prev = btn.textContent;
         btn.textContent = "已复制";
         btn.classList.add("ok");
-        setTimeout(() => { btn.textContent = prev; btn.classList.remove("ok"); }, 1400);
+        live.textContent = "已复制到剪贴板";
+        setTimeout(() => {
+          btn.textContent = prev;
+          btn.classList.remove("ok");
+          live.textContent = "";
+        }, 1400);
       } catch {
         btn.textContent = "失败";
-        setTimeout(() => { btn.textContent = "复制"; }, 1400);
+        live.textContent = "复制失败，请手动选择";
+        setTimeout(() => { btn.textContent = "复制"; live.textContent = ""; }, 1400);
       }
+    }
+
+    document.addEventListener("click", (e) => {
+      const copyBtn = e.target.closest(".copy");
+      if (copyBtn) {
+        const el = document.getElementById(copyBtn.dataset.copy);
+        if (el) copyText(el.textContent, copyBtn);
+        return;
+      }
+      const skillCopy = e.target.closest(".skill-copy");
+      if (skillCopy) copyText(skillCopy.dataset.text || "", skillCopy);
     });
+
+    /* Filter + search */
+    let activeFilter = "all";
+    const qInput = document.getElementById("q");
+    const countEl = document.getElementById("visible-count");
+
+    function applyFilter() {
+      const q = (qInput.value || "").trim().toLowerCase();
+      let visible = 0;
+
+      document.querySelectorAll(".skill").forEach((row) => {
+        const domain = row.dataset.domain;
+        const matchDomain = activeFilter === "all" || domain === activeFilter;
+        const matchQ = !q || (row.dataset.q || "").includes(q);
+        const show = matchDomain && matchQ;
+        row.classList.toggle("is-hidden", !show);
+        if (show) visible += 1;
+      });
+
+      document.querySelectorAll("[data-domain-block]").forEach((block) => {
+        const key = block.dataset.domainBlock;
+        const domainAllowed = activeFilter === "all" || activeFilter === key;
+        const anyVisible = [...block.querySelectorAll(".skill")].some((s) => !s.classList.contains("is-hidden"));
+        block.hidden = !domainAllowed || !anyVisible;
+      });
+
+      const coreVisible = [...document.querySelectorAll("#core-skills .skill")].some((s) => !s.classList.contains("is-hidden"));
+      const showCoreSection = (activeFilter === "all" || activeFilter === "core") && (coreVisible || !q);
+      document.getElementById("empty-core").classList.toggle("is-visible", (activeFilter === "all" || activeFilter === "core") && !coreVisible);
+      document.getElementById("core-skills").hidden = !showCoreSection && activeFilter !== "core";
+      if (activeFilter === "core") document.getElementById("core-skills").hidden = false;
+
+      const anyAgent = [...document.querySelectorAll("#agent-domains .skill")].some((s) => !s.classList.contains("is-hidden"));
+      document.getElementById("empty-agents").classList.toggle(
+        "is-visible",
+        activeFilter !== "core" && !anyAgent
+      );
+
+      countEl.textContent = `显示 ${visible} 项`;
+    }
+
+    document.querySelectorAll(".chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        activeFilter = chip.dataset.filter;
+        document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
+        applyFilter();
+      });
+    });
+    qInput.addEventListener("input", applyFilter);
+    applyFilter();
+
+    /* Nav */
+    const nav = document.getElementById("nav");
+    const toggle = nav.querySelector(".nav-toggle");
+    toggle.addEventListener("click", () => {
+      const open = nav.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+    });
+    nav.querySelectorAll(".nav-links a").forEach((a) => {
+      a.addEventListener("click", () => {
+        nav.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+      });
+    });
+    window.addEventListener("scroll", () => {
+      nav.classList.toggle("is-scrolled", window.scrollY > 12);
+    }, { passive: true });
+
+    /* Reveal */
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      document.querySelectorAll(".reveal").forEach((el) => el.classList.add("is-in"));
+    } else if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            en.target.classList.add("is-in");
+            io.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+    } else {
+      document.querySelectorAll(".reveal").forEach((el) => el.classList.add("is-in"));
+    }
   </script>
 </body>
 </html>
