@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Storage Analysis Report</title>
+<style>
+:root{--bg:#0f172a;--card:#111827;--soft:#1f2937;--text:#f9fafb;--muted:#9ca3af;--line:#374151;--green:#34d399;--yellow:#fbbf24;--red:#f87171;--blue:#60a5fa;--gray:#6b7280}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55}
+main{max-width:1080px;margin:0 auto;padding:28px 20px 80px}
+h1{font-size:32px;margin:0 0 16px}
+h2{font-size:22px;margin:34px 0 14px}
+h3{font-size:18px;margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0}
+.muted{color:var(--muted);font-size:14px}
+.hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.metric{background:var(--soft);border-radius:12px;padding:14px}
+.metric .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.metric .value{font-size:26px;font-weight:700;margin-top:6px}
+.bar{height:14px;border-radius:999px;background:#374151;overflow:hidden;display:flex;min-width:220px;margin:12px 0}
+.bar span{height:100%;display:block}
+.bar .green{background:var(--green)}.bar .yellow{background:var(--yellow)}.bar .red{background:var(--red)}.bar .blue{background:var(--blue)}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{padding:6px 10px;border-radius:999px;font-size:13px;background:var(--soft);border:1px solid var(--line)}
+.pill.green{color:var(--green)}.pill.yellow{color:var(--yellow)}.pill.red{color:var(--red)}.pill.blue{color:var(--blue)}
+.grid{display:grid;gap:12px}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.table th{color:var(--muted);font-weight:600;font-size:13px}
+details{background:var(--soft);border:1px solid var(--line);border-radius:14px;margin:12px 0}
+summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+.item{padding:14px 16px;border-top:1px solid var(--line)}
+.title{font-size:18px;font-weight:800}
+.meta{color:var(--muted);font-size:13px;margin-top:4px}
+.badge{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:800;margin-right:6px}
+.badge.green{color:#052e16;background:var(--green)}.badge.yellow{color:#451a03;background:var(--yellow)}.badge.red{color:#450a0a;background:var(--red)}
+code,.cmd{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;background:#0b1220;border:1px solid var(--line);border-radius:8px;padding:2px 7px;white-space:pre-wrap}
+.cmds{display:grid;gap:8px;margin:10px 0}
+.row{display:flex;align-items:flex-start;gap:8px}
+.row .cmd{flex:1}
+button{border:0;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer;background:#1d4ed8;color:white}
+button.green{background:#059669}
+button.yellow{background:#d97706}
+button.blue{background:#374151}
+button.small{padding:7px 9px;font-size:13px}
+button[disabled]{opacity:.6;cursor:default}
+.note{margin:8px 0;color:var(--muted);font-size:14px}
+.list{margin:8px 0 0 18px}
+.ok{color:var(--green);font-size:13px;margin-top:8px}
+.err{color:var(--red);font-size:13px;margin-top:8px;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<main>
+<h1>存储分析报告</h1>
+<p class="muted" id="meta">Loading...</p>
+<section class="card" id="disk-card"><div class="hero" id="hero"></div><div class="bar" id="disk-bar"></div><div class="pills" id="pills"></div></section>
+<section id="top5"><h2>占用排行 Top 5</h2><div class="card"><table class="table" id="top-table"></table></div></section>
+<section id="advice"><h2>执行建议</h2><div class="card" id="summary-card"></div></section>
+<section id="tiers"><h2>清理决策清单</h2><div id="tier-boxes"></div></section>
+<section id="long-term"><h2>长期优化建议</h2><div class="card" id="long-term-box"></div></section>
+<section id="denied" hidden><h2>未读取目录</h2><div class="card" id="denied-box"></div></section>
+</main>
+<script id="report-data" type="application/json">__REPORT_DATA__</script>
+<script id="delete-config" type="application/json">__DELETE_CONFIG__</script>
+<script>
+(function(){
+  "use strict";
+  const D = JSON.parse(document.getElementById('report-data').textContent || '{}');
+  const C = JSON.parse(document.getElementById('delete-config').textContent || 'null');
+  const data = D || {};
+  const cfg = C;
+
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function parseGB(v) {
+    const m = String(v || '').match(/([\d.,]+)\s*(GB|TB|MB)/i);
+    if (!m) return 0;
+    const n = parseFloat(m[1].replace(/,/g, ''));
+    const unit = m[2].toUpperCase();
+    if (unit === 'TB') return n * 1024;
+    if (unit === 'MB') return n / 1024;
+    return n;
+  }
+
+  function clean(v) {
+    return String(v || '').replace(/\s*（估算）\s*|\s*\(估算\)\s*/g, '').trim();
+  }
+
+  function humanBytes(b) {
+    if (b == null) return '';
+    const u = ['B','KB','MB','GB','TB'];
+    let i = 0;
+    while (b >= 1024 && i < u.length - 1) { b /= 1024; i += 1; }
+    return b.toFixed(1) + ' ' + u[i];
+  }
+
+  function pct(total, used, green, yellow, red) {
+    const g = Math.min(total || 0, green || 0);
+    const y = Math.min(total || 0, yellow || 0);
+    const r = Math.min(total || 0, red || 0);
+    const blue = Math.max(0, (used || 0) - g - y - r);
+    return {
+      g: total ? g / total * 100 : 0,
+      y: total ? y / total * 100 : 0,
+      r: total ? r / total * 100 : 0,
+      b: total ? blue / total * 100 : 0
+    };
+  }
+
+  function setMeta() {
+    const s = data.system || {};
+    const parts = [s.os, s.user, s.home, s.generated_at || data.generated_at, data.scan_seconds ? ('扫描 ' + data.scan_seconds + 's') : null];
+    document.getElementById('meta').textContent = parts.filter(Boolean).join(' · ');
+    const disks = (s.disks || []).map(function(d){ return esc(d.name) + ' 总 ' + esc(d.total) + ' / 用 ' + esc(d.used) + ' / 余 ' + esc(d.free); }).join('；');
+    if (disks) document.getElementById('meta').textContent += '　|　' + disks;
+  }
+
+  function diskCard() {
+    const s = data.system || {};
+    const ts = parseGB(s.disk_total);
+    const us = parseGB(s.disk_used);
+    const tier = (data.summary && data.summary.tier_stats) || {};
+    const g = parseGB(tier.green);
+    const y = parseGB(tier.yellow);
+    const r = parseGB(tier.red);
+    const b = Math.max(0, us - g - y - r);
+    const p = pct(ts, us, g, y, r);
+
+    const hero = document.getElementById('hero');
+    hero.innerHTML = '';
+    function metric(label, val) {
+      const d = document.createElement('div');
+      d.className = 'metric';
+      d.innerHTML = '<div class="label">' + esc(label) + '</div><div class="value">' + esc(val) + '</div>';
+      hero.appendChild(d);
+    }
+    metric('总容量', s.disk_total);
+    metric('已用', s.disk_used);
+    metric('可用', s.disk_free);
+    metric('文件路径', s.home || '-');
+
+    const bar = document.getElementById('disk-bar');
+    bar.innerHTML =
+      '<span class="green" style="width:' + p.g + '%"></span>' +
+      '<span class="yellow" style="width:' + p.y + '%"></span>' +
+      '<span class="red" style="width:' + p.r + '%"></span>' +
+      '<span class="blue" style="width:' + p.b + '%"></span>';
+
+    const pills = document.getElementById('pills');
+    pills.innerHTML = '';
+    function pill(cls, txt) {
+      const d = document.createElement('div');
+      d.className = 'pill ' + cls;
+      d.textContent = txt;
+      pills.appendChild(d);
+    }
+    pill('green', '🟢 可自动清理 ' + (tier.green ? clean(tier.green) : '0 GB'));
+    pill('yellow', '🟡 需人工判断 ' + (tier.yellow ? clean(tier.yellow) : '0 GB'));
+    pill('red', '🔴 谨慎清理 ' + (tier.red ? clean(tier.red) : '0 GB'));
+    pill('blue', '🔵 系统及其他 ' + (b > 0.1 ? humanBytes(b * Math.pow(1024, 3)) : '-'));
+  }
+
+  function top5() {
+    const rows = data.top5 || [];
+    const t = document.getElementById('top-table');
+    let h = '<tr><th>#</th><th>项目</th><th>类型</th><th>大小</th><th>说明</th><th>路径</th></tr>';
+    rows.forEach(function(x, i) {
+      h += '<tr><td>' + (i + 1) + '</td>' +
+        '<td><span class="badge ' + esc(x.tier || '') + '">' + esc(x.tier || '-') + '</span>' + esc(x.name) + '</td>' +
+        '<td>' + esc(x.type || '-') + '</td>' +
+        '<td>' + esc(clean(x.size || '')) + '</td>' +
+        '<td>' + esc(x.note || '') + '</td>' +
+        '<td><code>' + esc(x.path || '') + '</code></td></tr>';
+    });
+    t.innerHTML = h;
+    document.getElementById('top5').style.display = rows.length ? '' : 'none';
+  }
+
+  function advice() {
+    const s = data.summary || {};
+    const c = document.getElementById('summary-card');
+    let h = '';
+    if (s.overview) h += '<p>' + esc(s.overview) + '</p>';
+    if (s.priority && s.priority.length) h += '<ul class="list">' + s.priority.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+    if (!h) c.hidden = true;
+    document.getElementById('advice').style.display = h ? '' : 'none';
+    c.innerHTML = h || '';
+  }
+
+  function makeBtn(paths, label, cls, mode, openNote) {
+    const wrap = document.createElement('div');
+    wrap.className = 'row';
+    const btn = document.createElement('button');
+    btn.textContent = label;
+    btn.className = cls || 'blue';
+    if (paths && paths.length && cfg) {
+      btn.onclick = function() {
+        const msg = (mode === 'rm' ? '直接删除将立即释放空间，且不可恢复。' : '执行所选操作。') + '确认继续？';
+        if (!confirm(msg)) return;
+        btn.disabled = true;
+        btn.textContent = '处理中…';
+        fetch(cfg.endpoint, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({token: cfg.token, mode: mode || 'open', paths: paths})
+        }).then(function(r){ return r.json(); }).then(function(j){
+          if (j.ok) {
+            wrap.insertAdjacentHTML('beforeend', '<div class="ok">已完成：' + esc((j.done || paths || []).join('<br>')) + '</div>');
+          } else {
+            wrap.insertAdjacentHTML('beforeend', '<div class="err">' + esc(j.error || '操作失败') + '</div>');
+          }
+          btn.disabled = false;
+          btn.textContent = label;
+        }).catch(function(e){
+          wrap.insertAdjacentHTML('beforeend', '<div class="err">' + esc(e.message || e) + '</div>');
+          btn.disabled = false;
+          btn.textContent = label;
+        });
+      };
+    } else {
+      btn.disabled = true;
+      btn.textContent = label + '（静态报告）';
+    }
+    wrap.appendChild(btn);
+    if (openNote) wrap.insertAdjacentHTML('beforeend', '<div class="note">' + esc(openNote) + '</div>');
+    return wrap;
+  }
+
+  function itemCard(it, tier) {
+    const d = document.createElement('details');
+    const s = document.createElement('summary');
+    s.innerHTML = '<div><span class="badge ' + tier + '">' + tier + '</span>' + esc(it.name || '') + '</div><div>' + esc(clean(it.size_estimate || it.size || '')) + '</div>';
+    d.appendChild(s);
+    const body = document.createElement('div');
+    body.className = 'item';
+    let h = '';
+    if (it.path) h += '<div class="meta">' + esc(it.path) + '</div>';
+    if (it.content_profile) h += '<p><strong>内容画像：</strong>' + esc(it.content_profile) + '</p>';
+    if (it.why_manual) h += '<p><strong>为什么需判断：</strong>' + esc(it.why_manual) + '</p>';
+    if (it.why_keep) h += '<p><strong>为什么不建议手删：</strong>' + esc(it.why_keep) + '</p>';
+    if (it.disposal) h += '<p><strong>处置路径：</strong>' + esc(it.disposal) + '</p>';
+    if (it.risk) h += '<p><strong>风险提示：</strong>' + esc(it.risk) + '</p>';
+    if (it.indirect_release) h += '<p><strong>间接释放方式：</strong>' + esc(it.indirect_release) + '</p>';
+    if (it.open_note) h += '<p class="note">' + esc(it.open_note) + '</p>';
+    if (tier === 'green' && it.kill_processes && it.kill_processes.length) h += '<p><strong>清理前建议关闭：</strong>' + esc(it.kill_processes.join('、')) + '</p>';
+    if (it.commands && it.commands.length) {
+      h += '<div class="cmds">' + it.commands.map(function(c){
+        return '<div class="row"><span class="muted">' + esc(c.label || '命令') + '</span><code class="cmd">' + esc(c.cmd || '') + '</code></div>';
+      }).join('') + '</div>';
+    }
+    body.innerHTML = h;
+
+    if (cfg) {
+      if (tier === 'green' && it.trash_paths && it.trash_paths.length) {
+        body.appendChild(makeBtn(it.trash_paths, '移到废纸篓', 'green', 'trash'));
+        body.appendChild(makeBtn(it.trash_paths, '直接删除', 'red', 'rm'));
+      }
+      if (tier === 'yellow') {
+        if (it.trash_paths && it.trash_paths.length) body.appendChild(makeBtn(it.trash_paths, '移到废纸篓', 'yellow', 'trash'));
+        if (it.path) body.appendChild(makeBtn([it.path], '在资源管理器打开', 'blue', 'open', it.open_note));
+      }
+      if (tier === 'red' && it.app_paths && it.app_paths.length) {
+        body.appendChild(makeBtn(it.app_paths, '在文件管理器打开（去卸载）', 'blue', 'open', it.open_note));
+      }
+    } else if (tier === 'yellow' || tier === 'red') {
+      body.insertAdjacentHTML('beforeend', '<p class="note">静态报告仅提供查看，不提供删除或移动按钮；需要删除能力时使用服务版报告。</p>');
+    }
+    d.appendChild(body);
+    return d;
+  }
+
+  function tiers() {
+    const box = document.getElementById('tier-boxes');
+    box.innerHTML = '';
+    const defs = [
+      ['green', '🟢 可自动清理', data.green || []],
+      ['yellow', '🟡 需人工判断', data.yellow || []],
+      ['red', '🔴 谨慎清理', data.red || []]
+    ];
+    defs.forEach(function(def) {
+      const cls = def[0], title = def[1], items = def[2];
+      if (!items.length) return;
+      const sec = document.createElement('div');
+      sec.className = 'card';
+      sec.innerHTML = '<h3>' + title + '</h3>';
+      items.forEach(function(it){ sec.appendChild(itemCard(it, cls)); });
+      box.appendChild(sec);
+    });
+    if (!box.children.length) box.parentElement.style.display = 'none';
+  }
+
+  function longTerm() {
+    const s = data.summary || {};
+    const box = document.getElementById('long-term-box');
+    box.innerHTML = '';
+    if (s.long_term && s.long_term.length) {
+      s.long_term.forEach(function(x){ box.insertAdjacentHTML('beforeend', '<p>' + esc(x) + '</p>'); });
+    } else {
+      box.parentElement.style.display = 'none';
+    }
+  }
+
+  function denied() {
+    const d = data.denied || [];
+    const box = document.getElementById('denied-box');
+    box.innerHTML = '';
+    if (d.length) {
+      d.forEach(function(x){ box.insertAdjacentHTML('beforeend', '<code class="cmd">' + esc(x) + '</code><br>'); });
+    } else {
+      document.getElementById('denied').hidden = true;
+    }
+  }
+
+  setMeta();
+  diskCard();
+  top5();
+  advice();
+  tiers();
+  longTerm();
+  denied();
+})();
+</script>
+</body>
+</html>

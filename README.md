@@ -1,6 +1,6 @@
 # AI Skills
 
-通用 Agent Skills 集合。每个 skill 提供可复用的工作流、规范引用与辅助脚本，覆盖需求分析、Harness 治理、全栈开发、代码审查、缺陷诊断与售后报工等场景。
+通用 Agent Skills 集合。每个 skill 提供可复用的工作流、规范引用与辅助脚本，覆盖需求分析、Harness 治理、全栈开发、代码审查、缺陷诊断、售后报工与存储分析等场景。
 
 ## 仓库结构
 
@@ -13,7 +13,8 @@ ai-skills/
     ├── ai-coder/                   # 按仓库约定落地功能开发
     ├── code-review/                # Standards × Spec 双轴审查
     ├── diagnosing-bugs/            # 症状驱动的根因定位与修复
-    └── hs-warranty-report/         # 豪森质保/售后报工文案生成
+    ├── hs-warranty-report/         # 豪森质保/售后报工文案生成
+    └── storage-analyzer/           # macOS / Windows 只读存储分析与交互报告
 ```
 
 每个 skill 目录至少包含：
@@ -37,6 +38,7 @@ ai-skills/
 | **code-review** | 对分支 / PR / 提交 / 未提交改动做规范与需求双轴审查（默认只报告不改代码） | 合并前检查、review since X |
 | **diagnosing-bugs** | 以可复现症状与证据定位故障；仅诊断时不自动改代码 | debug、根因分析、性能回退 |
 | **hs-warranty-report** | 按售后报工规范生成「项目名称」与「具体工作内容」（现象 / 过程 / 输出物） | 质保报工、整理近一周 session |
+| **storage-analyzer** | 只读扫描磁盘占用，三级清理分级，生成可一键清理的交互式 HTML 报告 | 磁盘满了、清理空间、storage analysis |
 
 ## 安装
 
@@ -58,6 +60,7 @@ npx skills add maoyao0607/ai-skills@ai-coder -g -y
 npx skills add maoyao0607/ai-skills@code-review -g -y
 npx skills add maoyao0607/ai-skills@diagnosing-bugs -g -y
 npx skills add maoyao0607/ai-skills@hs-warranty-report -g -y
+npx skills add maoyao0607/ai-skills@storage-analyzer -g -y
 ```
 
 | Skill | 安装命令 |
@@ -69,6 +72,7 @@ npx skills add maoyao0607/ai-skills@hs-warranty-report -g -y
 | code-review | `npx skills add maoyao0607/ai-skills@code-review -g -y` |
 | diagnosing-bugs | `npx skills add maoyao0607/ai-skills@diagnosing-bugs -g -y` |
 | hs-warranty-report | `npx skills add maoyao0607/ai-skills@hs-warranty-report -g -y` |
+| storage-analyzer | `npx skills add maoyao0607/ai-skills@storage-analyzer -g -y` |
 
 安装后重新打开会话，在对话中描述目标即可触发对应 skill（例如「帮我写质保报工」「为当前仓库初始化 Harness」）。
 
