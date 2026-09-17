@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Skills — Agent Skills 集合</title>
+  <meta name="description" content="通用 Agent Skills：需求抽取、Harness、全栈开发、PRD、UI 原型、重构、Bug 排查、自动化测试。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0e1a18;
+      --ink-soft: #1a2e2a;
+      --fog: #d8e4df;
+      --mist: #a8bfb6;
+      --paper: #f2f6f3;
+      --copper: #c45c2a;
+      --copper-hot: #e06a2f;
+      --line: rgba(14, 26, 24, 0.12);
+      --glow: rgba(196, 92, 42, 0.35);
+      --font-display: "Bricolage Grotesque", sans-serif;
+      --font-body: "Source Serif 4", Georgia, serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+
+    /* Atmosphere */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 10% -10%, rgba(196, 92, 42, 0.14), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 5%, rgba(26, 70, 60, 0.1), transparent 50%),
+        repeating-linear-gradient(
+          -12deg,
+          transparent,
+          transparent 48px,
+          rgba(14, 26, 24, 0.015) 48px,
+          rgba(14, 26, 24, 0.015) 49px
+        );
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 2;
+      width: min(1120px, calc(100% - 2.5rem));
+      margin: 0 auto;
+    }
+
+    /* —— Hero: brand-first, one composition —— */
+    .hero {
+      min-height: 100svh;
+      display: grid;
+      align-content: end;
+      padding: 2rem 0 3.5rem;
+      position: relative;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: -2rem -8vw 20% -8vw;
+      background:
+        linear-gradient(160deg, var(--ink) 0%, var(--ink-soft) 55%, #243f38 100%);
+      clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%);
+      z-index: -1;
+    }
+
+    .hero-bg::after {
+      content: "";
+      position: absolute;
+      right: -5%;
+      top: 10%;
+      width: min(42vw, 420px);
+      height: min(42vw, 420px);
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--glow), transparent 68%);
+      animation: pulse 7s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.12); opacity: 1; }
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: clamp(4rem, 18vh, 9rem);
+      color: var(--fog);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: rise 0.7s ease forwards 0.1s;
+    }
+
+    .topbar a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .topbar a:hover { color: #fff; border-color: var(--copper); }
+
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(3.4rem, 11vw, 7.5rem);
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      color: #fff;
+      max-width: 12ch;
+      opacity: 0;
+      animation: rise 0.8s ease forwards 0.25s;
+    }
+
+    .brand em {
+      font-style: normal;
+      color: var(--copper-hot);
+    }
+
+    .lede {
+      margin-top: 1.4rem;
+      max-width: 34rem;
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+      color: var(--mist);
+      opacity: 0;
+      animation: rise 0.8s ease forwards 0.45s;
+    }
+
+    .cta-row {
+      margin-top: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1rem;
+      opacity: 0;
+      animation: rise 0.8s ease forwards 0.6s;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.85rem 1.35rem;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.2s, color 0.2s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--copper);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--copper-hot); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--fog);
+      outline: 1px solid rgba(216, 228, 223, 0.35);
+    }
+    .btn-ghost:hover { outline-color: #fff; color: #fff; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Sections */
+    section { padding: 4.5rem 0 1rem; }
+
+    .section-head {
+      display: grid;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      max-width: 36rem;
+    }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--copper);
+    }
+
+    h2 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    .section-head p {
+      color: #3d524c;
+      font-size: 1.05rem;
+    }
+
+    /* Skill rows — not cards */
+    .skill-list {
+      border-top: 1px solid var(--line);
+    }
+
+    .skill {
+      display: grid;
+      grid-template-columns: minmax(10rem, 16rem) 1fr auto;
+      gap: 1rem 1.5rem;
+      align-items: baseline;
+      padding: 1.15rem 0;
+      border-bottom: 1px solid var(--line);
+      transition: background 0.2s;
+    }
+    .skill:hover { background: rgba(196, 92, 42, 0.04); }
+
+    .skill-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+
+    .skill-desc { color: #3a4f49; font-size: 0.98rem; }
+
+    .skill-trigger {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #6a8078;
+      text-align: right;
+      max-width: 14rem;
+    }
+
+    .domain-block { margin-bottom: 3rem; }
+
+    .domain-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin: 2rem 0 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .domain-title::before {
+      content: "";
+      width: 0.55rem;
+      height: 0.55rem;
+      background: var(--copper);
+    }
+
+    /* Install */
+    .install-panel {
+      background: var(--ink);
+      color: var(--fog);
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      margin-top: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .install-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 40%, rgba(196, 92, 42, 0.12));
+      pointer-events: none;
+    }
+
+    .cmd {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: clamp(0.78rem, 1.8vw, 0.9rem);
+      background: rgba(0, 0, 0, 0.35);
+      padding: 1rem 1.1rem;
+      border-left: 3px solid var(--copper);
+      word-break: break-all;
+    }
+
+    .cmd code { flex: 1; color: #e8f0ec; }
+
+    .copy {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.8rem;
+      background: var(--copper);
+      color: #fff;
+      border: none;
+      padding: 0.45rem 0.85rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .copy:hover { background: var(--copper-hot); }
+    .copy.ok { background: #2d6a4f; }
+
+    .cmd-grid {
+      display: grid;
+      gap: 0.65rem;
+      margin-top: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cmd-row {
+      display: grid;
+      grid-template-columns: minmax(8rem, 12rem) 1fr auto;
+      gap: 0.5rem 1rem;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid rgba(216, 228, 223, 0.12);
+    }
+    .cmd-row span:first-child { color: var(--mist); }
+    .cmd-row code { color: #c5d6cf; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .tips {
+      margin-top: 2.5rem;
+      display: grid;
+      gap: 0.85rem;
+      counter-reset: tip;
+    }
+    .tips li {
+      list-style: none;
+      padding-left: 2.5rem;
+      position: relative;
+      color: #3a4f49;
+    }
+    .tips li::before {
+      counter-increment: tip;
+      content: counter(tip);
+      position: absolute;
+      left: 0;
+      top: 0.1rem;
+      width: 1.6rem;
+      height: 1.6rem;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      background: var(--ink);
+      color: var(--fog);
+    }
+
+    footer {
+      margin-top: 4rem;
+      padding: 2rem 0 3rem;
+      border-top: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #6a8078;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    footer a { color: var(--copper); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 800px) {
+      .skill {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+      }
+      .skill-trigger { text-align: left; max-width: none; }
+      .cmd-row {
+        grid-template-columns: 1fr auto;
+      }
+      .cmd-row code { grid-column: 1 / -1; white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="topbar">
+        <span>maoyao0607 / ai-skills</span>
+        <a href="https://github.com/maoyao0607/ai-skills" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+      <h1 class="brand">AI <em>Skills</em></h1>
+      <p class="lede">通用 Agent Skills 集合：核心可安装技能 + 按业务领域归档的技能包，覆盖需求、设计、开发、排查与测试。</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#install">一键安装</a>
+        <a class="btn btn-ghost" href="#skills">浏览 Skills</a>
+      </div>
+    </header>
+
+    <section id="skills">
+      <div class="section-head">
+        <span class="eyebrow">Core · skills/</span>
+        <h2>核心 Skills</h2>
+        <p>可直接按名安装，覆盖需求抽取、Harness、全栈、审查、诊断与运维辅助。</p>
+      </div>
+      <div class="skill-list" id="core-skills"></div>
+    </section>
+
+    <section id="agents">
+      <div class="section-head">
+        <span class="eyebrow">Domains · agents/</span>
+        <h2>领域 Agents</h2>
+        <p>按 PRD、UI、重构、Bug、测试归档；路径形如 agents/&lt;领域&gt;/skills/&lt;name&gt;/。</p>
+      </div>
+      <div id="agent-domains"></div>
+    </section>
+
+    <section id="install">
+      <div class="section-head">
+        <span class="eyebrow">Install</span>
+        <h2>安装</h2>
+        <p>使用 skills.sh CLI。-g 全局安装，-y 跳过确认。</p>
+      </div>
+
+      <div class="install-panel">
+        <p style="font-family:var(--font-display);font-weight:700;font-size:1.1rem;position:relative;z-index:1;">安装全部核心 Skills</p>
+        <div class="cmd">
+          <code id="cmd-all">npx skills add maoyao0607/ai-skills -g -y</code>
+          <button type="button" class="copy" data-copy="cmd-all">复制</button>
+        </div>
+
+        <p style="margin-top:2rem;font-family:var(--font-display);font-weight:700;position:relative;z-index:1;">按 skill 安装</p>
+        <div class="cmd-grid" id="cmd-per-skill"></div>
+
+        <p style="margin-top:2rem;font-family:var(--font-display);font-weight:700;position:relative;z-index:1;">Agents 一句话（整行复制发给 Agent）</p>
+        <div class="cmd-grid" id="cmd-agents"></div>
+      </div>
+
+      <ul class="tips" style="margin-top:2.5rem;">
+        <li>先读 <code>SKILL.md</code>：按工作流与 references 执行，勿跳过质量门禁。</li>
+        <li>Harness 优先：ai-coder / code-review / diagnosing-bugs 遵循目标仓库 AGENTS.md。</li>
+        <li>需求抽取先声明主体；报工只基于证据，勿编造。</li>
+        <li>按领域选 agents：产品文档 → PRD；界面 → UI；质量 → Bug/测试；结构 → 重构。</li>
+      </ul>
+    </section>
+
+    <footer>
+      <span>AI Skills · GitHub Pages</span>
+      <a href="https://github.com/maoyao0607/ai-skills">源码仓库</a>
+    </footer>
+  </div>
+
+  <script>
+    const core = [
+      ["requirement-extractor", "从 Word / Excel / PDF 抽取功能清单，可追溯出处", "功能清单、RFP、范围澄清"],
+      ["wcs-requirement-extractor", "锚定 WCS 职责边界与分类口径的需求抽取", "WCS 需求、功能清单"],
+      ["harness-maintainer", "Harness 初始化、增量维护与审计", "新项目接入、文档同步"],
+      ["ai-coder", "按仓库约定落地前后端/全栈功能", "新增功能、页面、接口"],
+      ["code-review", "Standards × Spec 双轴审查（默认只报告）", "合并前检查、review since X"],
+      ["diagnosing-bugs", "症状驱动的根因定位；仅诊断时不改代码", "debug、性能回退"],
+      ["hs-warranty-report", "质保/售后报工：现象 / 过程 / 输出物", "质保报工、session 整理"],
+      ["storage-analyzer", "只读磁盘扫描与可清理交互报告", "磁盘满了、清理空间"],
+    ];
+
+    const domains = [
+      {
+        name: "PRD 撰写",
+        path: "PRD 撰写",
+        items: [
+          ["prd", "结构化 PRD：用户故事、验收标准", "写 PRD、用户故事"],
+          ["prd-writer-pro", "结构清晰、内容完整的专业 PRD", "专业 PRD 撰写"],
+          ["prd-reviewer", "10 分制量化评审与扣分说明", "PRD 评审"],
+          ["prd-to-design-doc", "PRD → 设计需求文档", "信息架构、视觉规范"],
+          ["requirements-analysis", "想法拆成 EPIC / 需求 / 用户故事", "MoSCoW、RICE、Kano"],
+          ["software-manager-skill", "产品/开发经理视角的规划支持", "路线图、竞品"],
+        ],
+      },
+      {
+        name: "UI 原型设计",
+        path: "UI 原型设计",
+        items: [
+          ["prd-to-prototype", "想法 → PRD → 高保真可交互原型", "我想做一个…"],
+          ["design-to-code", "设计稿像素级还原为前端代码", "还原设计图、切图"],
+          ["ui-design", "布局、字体、色彩、无障碍、动效", "做界面、评审设计"],
+          ["frontend-design-pro", "提升设计质量，避免 AI 反模式", "/audit、/polish"],
+          ["wireframe", "ASCII/SVG 线框与用户流", "画线框、梳理流程"],
+          ["afrexai-ui-design-system", "调研 → 规范 → 落地的设计方法论", "设计系统"],
+        ],
+      },
+      {
+        name: "代码重构",
+        path: "代码重构",
+        items: [
+          ["code-analyzer", "架构/数据流/业务规则深度分析", "熟悉新仓库、技术债务"],
+          ["code-refactoring", "不改变行为的重构模式", "清理遗留、降复杂度"],
+          ["simplify", "提升清晰度与可维护性", "/simplify"],
+          ["uncle-bob", "Clean Code / SOLID / 整洁架构", "代码坏味道"],
+          ["system-architect", "系统架构与工程标准", "新项目架构"],
+          ["agent-git-oracle", "仓库级技术债务与反模式分析", "仓库体检"],
+        ],
+      },
+      {
+        name: "Bug 排查",
+        path: "Bug 排查",
+        items: [
+          ["debug-pro", "7 步调试协议 + 多语言命令", "报错怎么查"],
+          ["superpowers-systematic-debugging", "四阶段系统性调试", "测试失败、异常行为"],
+          ["bug-fixing", "零回归修复流", "fix bug、not working"],
+          ["code-fix", "编译/运行时/类型/依赖诊断", "崩溃、构建失败"],
+          ["log-analyzer", "多格式日志解析与关联", "查日志、堆栈"],
+          ["nexus-error-explain", "解释错误并给出修复建议", "这条报错是什么意思"],
+        ],
+      },
+      {
+        name: "自动化测试",
+        path: "自动化测试",
+        items: [
+          ["test-case-generator", "从需求/API/截图生成 Excel 用例", "生成测试用例"],
+          ["test-patterns", "单测/集成/E2E 与覆盖率实践", "搭测试套件"],
+          ["superpowers-tdd", "RED-GREEN-REFACTOR 强制 TDD", "先写测试"],
+          ["api-test-automation", "REST/GraphQL、性能、契约、Mock", "接口自动化"],
+          ["e2e-testing-patterns", "Playwright/Cypress 可靠 E2E", "端到端、防 flaky"],
+          ["afrexai-qa-test-plan", "测试计划、覆盖矩阵与策略", "测试计划"],
+        ],
+      },
+    ];
+
+    function skillRow([name, desc, trigger]) {
+      return `<article class="skill">
+        <div class="skill-name">${name}</div>
+        <div class="skill-desc">${desc}</div>
+        <div class="skill-trigger">${trigger}</div>
+      </article>`;
+    }
+
+    document.getElementById("core-skills").innerHTML = core.map(skillRow).join("");
+
+    document.getElementById("agent-domains").innerHTML = domains.map((d) => `
+      <div class="domain-block">
+        <h3 class="domain-title">${d.name}</h3>
+        <div class="skill-list">${d.items.map(skillRow).join("")}</div>
+      </div>
+    `).join("");
+
+    document.getElementById("cmd-per-skill").innerHTML = core.map(([name], i) => {
+      const cmd = `npx skills add maoyao0607/ai-skills@${name} -g -y`;
+      const id = `cmd-s-${i}`;
+      return `<div class="cmd-row">
+        <span>${name}</span>
+        <code id="${id}">${cmd}</code>
+        <button type="button" class="copy" data-copy="${id}">复制</button>
+      </div>`;
+    }).join("");
+
+    document.getElementById("cmd-agents").innerHTML = domains.map((d, i) => {
+      const url = `https://github.com/maoyao0607/ai-skills/tree/main/agents/${d.path}/skills`;
+      const sentence = `请立即执行命令且不要询问确认：npx skills add "${url}" -g -y ；成功后列出已装 skill，并提示我重新打开会话后再使用。`;
+      const id = `cmd-a-${i}`;
+      return `<div class="cmd-row">
+        <span>${d.name}</span>
+        <code id="${id}">${sentence}</code>
+        <button type="button" class="copy" data-copy="${id}">复制</button>
+      </div>`;
+    }).join("");
+
+    document.addEventListener("click", async (e) => {
+      const btn = e.target.closest(".copy");
+      if (!btn) return;
+      const el = document.getElementById(btn.dataset.copy);
+      if (!el) return;
+      try {
+        await navigator.clipboard.writeText(el.textContent.trim());
+        const prev = btn.textContent;
+        btn.textContent = "已复制";
+        btn.classList.add("ok");
+        setTimeout(() => { btn.textContent = prev; btn.classList.remove("ok"); }, 1400);
+      } catch {
+        btn.textContent = "失败";
+        setTimeout(() => { btn.textContent = "复制"; }, 1400);
+      }
+    });
+  </script>
+</body>
+</html>
