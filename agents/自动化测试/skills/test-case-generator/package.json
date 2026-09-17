@@ -1,0 +1,6 @@
+{
+  "name": "test-case-generator",
+  "version": "1.1.0",
+  "description": "标准测试用例生成器（6列，Excel默认交付，含金融专项与设计方法指引）",
+  "license": "MIT"
+}
