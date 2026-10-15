@@ -18,6 +18,7 @@ ai-skills/
 │   ├── diagnosing-bugs/            # 症状驱动的根因定位与修复
 │   ├── hs-warranty-report/         # 豪森质保/售后报工文案生成
 │   ├── byd-wms-pda-style/        # 比亚迪 WMS PDA 页面样式与一致性校验
+│   ├── byd-wms-manage-style/     # 比亚迪 WMS 管理端样式、原生组件模板与一致性校验
 │   └── storage-analyzer/           # macOS / Windows 只读存储分析与交互报告
 │
 └── agents/                         # 领域归档 Skills
@@ -51,6 +52,7 @@ ai-skills/
 | **hs-warranty-report** | 按售后报工规范生成「项目名称」与「具体工作内容」（现象 / 过程 / 输出物） | 质保报工、日报整理、本周 git + session |
 | **storage-analyzer** | 只读扫描磁盘占用，三级清理分级，生成可一键清理的交互式 HTML 报告 | 磁盘满了、清理空间、storage analysis |
 | **byd-wms-pda-style** | 复用固定主题、PdaPage 与扫码/查询/登录/菜单模板，校验 Vue 3 + Element Plus PDA 风格 | PDA 页面开发、统一 PDA 样式、按比亚迪 PDA 风格实现 |
+| **[byd-wms-manage-style](skills/byd-wms-manage-style/SKILL.md)** | 复用 Vue 3 + Element Plus 管理端蓝白主题、紧凑左排查询区、small 工具栏、40px 居中选择/序号列及统一弹窗/抽屉，附模板、演示基准图与检查脚本 | 管理端页面开发、统一后台样式、按比亚迪管理端风格实现 |
 
 ## Agents 一览（`agents/`）
 
@@ -133,6 +135,7 @@ npx skills add maoyao0607/ai-skills@diagnosing-bugs -g -y
 npx skills add maoyao0607/ai-skills@hs-warranty-report -g -y
 npx skills add maoyao0607/ai-skills@storage-analyzer -g -y
 npx skills add maoyao0607/ai-skills@byd-wms-pda-style -g -y
+npx skills add maoyao0607/ai-skills@byd-wms-manage-style -g -y
 ```
 
 | Skill | 安装命令 |
@@ -146,6 +149,7 @@ npx skills add maoyao0607/ai-skills@byd-wms-pda-style -g -y
 | hs-warranty-report | `npx skills add maoyao0607/ai-skills@hs-warranty-report -g -y` |
 | storage-analyzer | `npx skills add maoyao0607/ai-skills@storage-analyzer -g -y` |
 | byd-wms-pda-style | `npx skills add maoyao0607/ai-skills@byd-wms-pda-style -g -y` |
+| byd-wms-manage-style | `npx skills add maoyao0607/ai-skills@byd-wms-manage-style -g -y` |
 
 安装后重新打开会话，在对话中描述目标即可触发对应 skill（例如「帮我写质保报工」「为当前仓库初始化 Harness」「生成测试用例」）。
 

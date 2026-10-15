@@ -1,0 +1,4 @@
+interface:
+  display_name: "BYD WMS 管理端统一样式"
+  short_description: "以固定主题、原生组件模板和可执行检查保持桌面管理端页面风格一致"
+  default_prompt: "使用 $byd-wms-manage-style 按统一管理端风格实现或检查本次页面，保留业务契约并验证实际渲染。"

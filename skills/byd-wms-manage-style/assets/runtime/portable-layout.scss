@@ -1,0 +1,18 @@
+// Optional foundation for standalone templates. Existing WMS layouts already
+// provide this structure; do not import it a second time in that application.
+:is(#total-layout.wms-management, .wms-dialog, .wms-drawer) {
+  .wms-card .card_header { display: flex; align-items: center; justify-content: space-between; }
+  .wms-card .card_header .left { display: flex; align-items: center; }
+  .wms-card .el-card__header .card-title { margin: 0; }
+  .wms-search .el-col-div { display: flex; width: 100%; }
+  .wms-grid .table-box { min-width: 0; }
+  .el-table .wms-index-column .cell { padding-right: 4px; padding-left: 4px; white-space: nowrap; }
+  .wms-edit-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; }
+  .wms-edit-form .el-form-item { margin: 0; }
+  .wms-detail-section + .wms-detail-section { margin-top: 24px; }
+  .wms-detail-title { margin: 0 0 16px; font-size: 16px; color: var(--wms-text); }
+  .el-drawer.wms-drawer .el-drawer__footer { margin-top: auto; }
+}
+@media (max-width: 768px) {
+  :is(.wms-dialog, .wms-drawer) .wms-edit-form { grid-template-columns: minmax(0, 1fr); }
+}
