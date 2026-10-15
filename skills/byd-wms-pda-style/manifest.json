@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "style_id": "byd-wms-pda-style",
+  "version": "1.0.0",
+  "source": {
+    "project": "wms-pda-front",
+    "commit": "be27cf4bddfe94365a9e301c71fbe243ebe4d0a3",
+    "date": "2026-10-15"
+  },
+  "validated_dependencies": {
+    "vue": "3.5.44",
+    "element-plus": "2.14.7",
+    "@element-plus/icons-vue": "2.3.2"
+  },
+  "hash_normalization": "UTF-8 text CRLF to LF; binary unchanged",
+  "files": [
+    {
+      "path": "assets/preview/operation-360.png",
+      "sha256": "1ed8af03a2dd688df25981b1ffa776d0f821185355fdac4ce01459f7d6e2f326"
+    },
+    {
+      "path": "assets/runtime/base.css",
+      "sha256": "4ab17d9df2716c4133cb34150654ac3875d65c98cc497e4045724f11fe13a9bc"
+    },
+    {
+      "path": "assets/runtime/install.js",
+      "sha256": "861cf9e4dec380bf41344bfebcd3abac0638e83cffd834ff76299673b8deac3f"
+    },
+    {
+      "path": "assets/runtime/login.scss",
+      "sha256": "46e7cf58a508ebe0b2a982954b5b670fb3e30c70ca83c06b5dbae8d075ac27a1"
+    },
+    {
+      "path": "assets/runtime/menu.scss",
+      "sha256": "12df74825bc2ead9c95874560341950f214691bcd73c68e4bac72844b2103e08"
+    },
+    {
+      "path": "assets/runtime/PdaPage.vue",
+      "sha256": "36eedd4e67522038f3328ee782936e625c63a9d144dc88e4c18aa62cc0dffb4d"
+    },
+    {
+      "path": "assets/templates/LoginPanel.vue",
+      "sha256": "381f4f5e99e0fb8c7ef45c93bd6d9d0a4dfac6ba84c173cd1bd230293241297a"
+    },
+    {
+      "path": "assets/templates/MenuPanel.vue",
+      "sha256": "f60631f5cf6b1e246546e87652254848544e7be35093ddfa759a94a454b98c87"
+    },
+    {
+      "path": "assets/templates/OperationPage.vue",
+      "sha256": "a722092518b419e73babb3077fe63f7fd07324957ffaf748174ebb4b0d73de1e"
+    },
+    {
+      "path": "assets/templates/QueryPage.vue",
+      "sha256": "9d4efcc9b9bce65697bc5d9038890087f2ed9d47105dc1fa3ad0ab01eb39baf0"
+    }
+  ]
+}

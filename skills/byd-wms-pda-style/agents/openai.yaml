@@ -1,0 +1,4 @@
+interface:
+  display_name: "BYD WMS PDA 统一样式"
+  short_description: "复用固定主题、页面骨架与组件模板，校验 WMS PDA 页面样式一致性"
+  default_prompt: "使用 $byd-wms-pda-style 新增或改造 PDA 页面，复用标准资产并执行样式一致性检查。"

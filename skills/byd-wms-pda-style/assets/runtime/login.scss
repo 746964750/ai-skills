@@ -1,0 +1,18 @@
+.loginbox {
+  display: grid; place-items: center; min-height: 100%; min-height: 100dvh; padding: 24px 16px;
+  background: linear-gradient(160deg, #e3edf6 0%, var(--pda-bg) 55%, #e5f0ef 100%);
+  .login { width: 100%; max-width: 400px; padding: 28px; background: white; border: 1px solid var(--pda-line); border-top: 4px solid var(--el-color-primary); border-radius: 16px; box-shadow: 0 16px 48px #1735530c; }
+  .loginheader {
+    margin: 20px 0 28px;
+    .logo { width: 90px; height: auto; }
+    h1 { margin: 16px 0 8px; font-size: 23px; line-height: 1.4; letter-spacing: -0.4px; }
+    p { margin: 0; color: var(--pda-muted); font-size: 14px; }
+  }
+  .login-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .login-mark { font: 600 12px/1.5 Consolas, monospace; color: var(--pda-muted); letter-spacing: 1px; }
+  .el-form-item { margin-bottom: 22px; }
+  .el-form-item__label { color: var(--pda-ink); font-weight: 500; padding-bottom: 6px; }
+  .el-input__wrapper { min-height: 48px; }
+  .el-input__inner { font-size: 16px; }
+  .btn .el-button { width: 100%; min-height: 48px; font-size: 16px; }
+}
