@@ -1,0 +1,590 @@
+{
+  "schema": 1,
+  "repository": "maoyao0607/ai-skills",
+  "groups": [
+    {
+      "id": "requirements",
+      "title": "需求与产品",
+      "description": "从原始材料或产品想法建立可追溯、可评审的需求。",
+      "guidance": "文档抽取选 requirement-extractor；WCS 范围选专项抽取；需求探索选 requirements-analysis；PRD 撰写与评审按产物选择。"
+    },
+    {
+      "id": "design",
+      "title": "设计与界面",
+      "description": "完成原型、设计稿还原、界面质量改进和行业样式落地。",
+      "guidance": "通用原型选 prd-to-prototype；设计还原选 design-to-code；WMS 项目按终端选择 PDA 或管理端样式。"
+    },
+    {
+      "id": "engineering",
+      "title": "架构与工程规范",
+      "description": "认识现有架构、识别技术债并维护工程约束。",
+      "guidance": "仓库摸底选 code-analyzer；架构设计选 system-architect；工程文档与检查机制选 harness-maintainer。"
+    },
+    {
+      "id": "development",
+      "title": "开发与重构",
+      "description": "实现功能，或在既有行为约束下改进代码结构。",
+      "guidance": "功能实现选 ai-coder；完整重构选 code-refactoring；小范围精简选 simplify；原则性指导选 uncle-bob。"
+    },
+    {
+      "id": "quality",
+      "title": "审查与测试",
+      "description": "核对需求与实现，设计测试并建立质量反馈。",
+      "guidance": "改动审查选 code-review；用例交付选 test-case-generator；按单测、接口、E2E 或 TDD 目标选择测试技能。"
+    },
+    {
+      "id": "debugging",
+      "title": "故障诊断",
+      "description": "通过症状、日志与复现证据定位故障并验证修复。",
+      "guidance": "一般故障先选 diagnosing-bugs；日志分析选 log-analyzer；其余调试流程按任务选一个，避免重复串联。"
+    },
+    {
+      "id": "utilities",
+      "title": "工作与系统工具",
+      "description": "整理工作记录和分析本机存储。",
+      "guidance": "报工选 hs-warranty-report；磁盘占用选 storage-analyzer，先区分只读报告和执行清理。"
+    }
+  ],
+  "skills": [
+    {
+      "name": "requirement-extractor",
+      "group": "requirements",
+      "path": "skills/requirements/requirement-extractor",
+      "summary": "从 Word、Excel、PDF 等材料抽取指定主体的功能、接口、歧义及出处。",
+      "tags": [
+        "需求抽取",
+        "出处追溯"
+      ],
+      "notes": [],
+      "previous_path": "skills/requirement-extractor",
+      "previous_name": "requirement-extractor"
+    },
+    {
+      "name": "wcs-requirement-extractor",
+      "group": "requirements",
+      "path": "skills/requirements/wcs-requirement-extractor",
+      "summary": "抽取 WCS 功能并区分上游业务系统、PLC 与设备控制层职责。",
+      "tags": [
+        "工业仓储",
+        "WCS",
+        "职责边界"
+      ],
+      "notes": [],
+      "previous_path": "skills/wcs-requirement-extractor",
+      "previous_name": "wcs-requirement-extractor"
+    },
+    {
+      "name": "requirements-analysis",
+      "group": "requirements",
+      "path": "skills/requirements/requirements-analysis",
+      "summary": "通过需求探索拆分 EPIC、需求和用户故事并排序。",
+      "tags": [
+        "用户故事",
+        "优先级"
+      ],
+      "notes": [],
+      "previous_path": "agents/PRD 撰写/skills/requirements-analysis",
+      "previous_name": "requirements-analysis"
+    },
+    {
+      "name": "software-manager-skill",
+      "group": "requirements",
+      "path": "skills/requirements/software-manager-skill",
+      "summary": "提供产品规划、路线图、竞品分析、PRD 和原型工作流。",
+      "tags": [
+        "产品规划",
+        "PRD"
+      ],
+      "notes": [
+        "完整流程需要可用的网络搜索及资料检索能力；按当前任务选择阶段。"
+      ],
+      "previous_path": "agents/PRD 撰写/skills/software-manager-skill",
+      "previous_name": "software-manager-skill"
+    },
+    {
+      "name": "prd",
+      "group": "requirements",
+      "path": "skills/requirements/prd",
+      "summary": "生成面向开发执行的用户故事、验收标准及结构化 PRD。",
+      "tags": [
+        "PRD",
+        "验收标准"
+      ],
+      "notes": [],
+      "previous_path": "agents/PRD 撰写/skills/prd",
+      "previous_name": "prd"
+    },
+    {
+      "name": "prd-writer-pro",
+      "group": "requirements",
+      "path": "skills/requirements/prd-writer-pro",
+      "summary": "将需求整理为结构清晰、内容完整的产品需求文档。",
+      "tags": [
+        "PRD",
+        "文档撰写"
+      ],
+      "notes": [],
+      "previous_path": "agents/PRD 撰写/skills/prd-writer-pro",
+      "previous_name": "prd-writer"
+    },
+    {
+      "name": "prd-reviewer",
+      "group": "requirements",
+      "path": "skills/requirements/prd-reviewer",
+      "summary": "按明确评分维度评审 PRD 并说明扣分与改进项。",
+      "tags": [
+        "PRD",
+        "需求评审"
+      ],
+      "notes": [],
+      "previous_path": "agents/PRD 撰写/skills/prd-reviewer",
+      "previous_name": "prd-reviewer"
+    },
+    {
+      "name": "prd-to-design-doc",
+      "group": "requirements",
+      "path": "skills/requirements/prd-to-design-doc",
+      "summary": "将 PRD 转为信息架构、交互、布局和视觉设计需求。",
+      "tags": [
+        "PRD",
+        "设计交付"
+      ],
+      "notes": [],
+      "previous_path": "agents/PRD 撰写/skills/prd-to-design-doc",
+      "previous_name": "prd-to-design-doc"
+    },
+    {
+      "name": "prd-to-prototype",
+      "group": "design",
+      "path": "skills/design/prd-to-prototype",
+      "summary": "从产品想法生成 PRD 和 HTML/Tailwind 可交互原型。",
+      "tags": [
+        "原型",
+        "HTML"
+      ],
+      "notes": [],
+      "previous_path": "agents/UI 原型设计/skills/prd-to-prototype",
+      "previous_name": "PRD to Prototype"
+    },
+    {
+      "name": "design-to-code",
+      "group": "design",
+      "path": "skills/design/design-to-code",
+      "summary": "将 Figma、Sketch 或图片设计稿还原为前端代码。",
+      "tags": [
+        "设计稿还原",
+        "前端"
+      ],
+      "notes": [],
+      "previous_path": "agents/UI 原型设计/skills/design-to-code",
+      "previous_name": "design-to-code"
+    },
+    {
+      "name": "ui-design",
+      "group": "design",
+      "path": "skills/design/ui-design",
+      "summary": "提供布局、字体、色彩、无障碍和动效的界面设计指导。",
+      "tags": [
+        "UI",
+        "无障碍"
+      ],
+      "notes": [],
+      "previous_path": "agents/UI 原型设计/skills/ui-design",
+      "previous_name": "ui-design"
+    },
+    {
+      "name": "frontend-design-pro",
+      "group": "design",
+      "path": "skills/design/frontend-design-pro",
+      "summary": "审视并改进前端界面质量与视觉细节。",
+      "tags": [
+        "前端",
+        "界面优化"
+      ],
+      "notes": [],
+      "previous_path": "agents/UI 原型设计/skills/frontend-design-pro",
+      "previous_name": "frontend-design-pro"
+    },
+    {
+      "name": "wireframe",
+      "group": "design",
+      "path": "skills/design/wireframe",
+      "summary": "生成 ASCII/SVG 线框、用户流程及 HTML 展示。",
+      "tags": [
+        "线框",
+        "用户流程"
+      ],
+      "notes": [],
+      "previous_path": "agents/UI 原型设计/skills/wireframe",
+      "previous_name": "wireframe"
+    },
+    {
+      "name": "afrexai-ui-design-system",
+      "group": "design",
+      "path": "skills/design/afrexai-ui-design-system",
+      "summary": "提供从设计调研到组件、交互和响应式落地的设计方法。",
+      "tags": [
+        "设计系统",
+        "响应式"
+      ],
+      "notes": [],
+      "previous_path": "agents/UI 原型设计/skills/afrexai-ui-design-system",
+      "previous_name": "afrexai-ui-design-system"
+    },
+    {
+      "name": "byd-wms-pda-style",
+      "group": "design",
+      "path": "skills/design/byd-wms-pda-style",
+      "summary": "复用 WMS PDA 主题、页面骨架、扫码模板和样式检查。",
+      "tags": [
+        "工业仓储",
+        "WMS",
+        "PDA",
+        "比亚迪"
+      ],
+      "notes": [],
+      "previous_path": "skills/byd-wms-pda-style",
+      "previous_name": "byd-wms-pda-style"
+    },
+    {
+      "name": "byd-wms-manage-style",
+      "group": "design",
+      "path": "skills/design/byd-wms-manage-style",
+      "summary": "复用 WMS 管理端主题、查询表格、弹窗、抽屉和样式检查。",
+      "tags": [
+        "工业仓储",
+        "WMS",
+        "管理端",
+        "比亚迪"
+      ],
+      "notes": [],
+      "previous_path": "skills/byd-wms-manage-style",
+      "previous_name": "byd-wms-manage-style"
+    },
+    {
+      "name": "harness-maintainer",
+      "group": "engineering",
+      "path": "skills/engineering/harness-maintainer",
+      "summary": "初始化、更新或审计工程文档、检查工具和责任机制。",
+      "tags": [
+        "Harness",
+        "工程规范"
+      ],
+      "notes": [],
+      "previous_path": "skills/harness-maintainer",
+      "previous_name": "harness-maintainer"
+    },
+    {
+      "name": "system-architect",
+      "group": "engineering",
+      "path": "skills/engineering/system-architect",
+      "summary": "设计系统架构、模块边界和适用工程标准。",
+      "tags": [
+        "架构设计",
+        "工程规范"
+      ],
+      "notes": [],
+      "previous_path": "agents/代码重构/skills/system-architect",
+      "previous_name": "system-architect"
+    },
+    {
+      "name": "code-analyzer",
+      "group": "engineering",
+      "path": "skills/engineering/code-analyzer",
+      "summary": "分析架构、数据流、业务规则和 DDD 模式。",
+      "tags": [
+        "代码分析",
+        "DDD"
+      ],
+      "notes": [],
+      "previous_path": "agents/代码重构/skills/code-analyzer",
+      "previous_name": "code-analyzer"
+    },
+    {
+      "name": "agent-git-oracle",
+      "group": "engineering",
+      "path": "skills/engineering/agent-git-oracle",
+      "summary": "分析仓库技术债和架构反模式。",
+      "tags": [
+        "技术债",
+        "架构分析"
+      ],
+      "notes": [
+        "原技能声明 x402 付费元数据及 OpenClaw 命令；使用前核验外部工具和费用条件。"
+      ],
+      "previous_path": "agents/代码重构/skills/agent-git-oracle",
+      "previous_name": "agent-git-oracle"
+    },
+    {
+      "name": "ai-coder",
+      "group": "development",
+      "path": "skills/development/ai-coder",
+      "summary": "遵循现有仓库约定实现前后端功能并完成验证。",
+      "tags": [
+        "功能开发",
+        "全栈"
+      ],
+      "notes": [],
+      "previous_path": "skills/ai-coder",
+      "previous_name": "ai-coder"
+    },
+    {
+      "name": "code-refactoring",
+      "group": "development",
+      "path": "skills/development/code-refactoring",
+      "summary": "运用重构模式改善结构并保持既有行为。",
+      "tags": [
+        "重构",
+        "遗留代码"
+      ],
+      "notes": [],
+      "previous_path": "agents/代码重构/skills/code-refactoring",
+      "previous_name": "code-refactoring"
+    },
+    {
+      "name": "simplify",
+      "group": "development",
+      "path": "skills/development/simplify",
+      "summary": "对局部代码做清晰、可维护的精简重构。",
+      "tags": [
+        "重构",
+        "代码精简"
+      ],
+      "notes": [],
+      "previous_path": "agents/代码重构/skills/simplify",
+      "previous_name": "simplify"
+    },
+    {
+      "name": "uncle-bob",
+      "group": "development",
+      "path": "skills/development/uncle-bob",
+      "summary": "将 Clean Code、SOLID 与整洁架构原则用于代码改进。",
+      "tags": [
+        "SOLID",
+        "整洁代码"
+      ],
+      "notes": [],
+      "previous_path": "agents/代码重构/skills/uncle-bob",
+      "previous_name": "uncle-bob"
+    },
+    {
+      "name": "code-review",
+      "group": "quality",
+      "path": "skills/quality/code-review",
+      "summary": "分别核对工程规范和需求实现，报告有证据的发现。",
+      "tags": [
+        "代码审查",
+        "需求核验"
+      ],
+      "notes": [],
+      "previous_path": "skills/code-review",
+      "previous_name": "code-review"
+    },
+    {
+      "name": "test-case-generator",
+      "group": "quality",
+      "path": "skills/quality/test-case-generator",
+      "summary": "从需求、API、截图或 XMind 生成标准 Excel 测试用例。",
+      "tags": [
+        "测试用例",
+        "Excel"
+      ],
+      "notes": [
+        "文中提及的 test-case-generator-ai 不包含在本仓库。"
+      ],
+      "previous_path": "agents/自动化测试/skills/test-case-generator",
+      "previous_name": "test-case-generator"
+    },
+    {
+      "name": "test-patterns",
+      "group": "quality",
+      "path": "skills/quality/test-patterns",
+      "summary": "提供跨语言单元、集成、E2E 测试和覆盖率实践。",
+      "tags": [
+        "单元测试",
+        "集成测试"
+      ],
+      "notes": [],
+      "previous_path": "agents/自动化测试/skills/test-patterns",
+      "previous_name": "test-patterns"
+    },
+    {
+      "name": "superpowers-tdd",
+      "group": "quality",
+      "path": "skills/quality/superpowers-tdd",
+      "summary": "通过 RED-GREEN-REFACTOR 流程实施测试驱动开发。",
+      "tags": [
+        "TDD",
+        "回归测试"
+      ],
+      "notes": [],
+      "previous_path": "agents/自动化测试/skills/superpowers-tdd",
+      "previous_name": "superpowers-tdd"
+    },
+    {
+      "name": "api-test-automation",
+      "group": "quality",
+      "path": "skills/quality/api-test-automation",
+      "summary": "提供 REST、GraphQL、性能、契约测试及 Mock 工具。",
+      "tags": [
+        "API",
+        "接口测试"
+      ],
+      "notes": [
+        "运行工具前按技能 requirements.txt 准备依赖。"
+      ],
+      "previous_path": "agents/自动化测试/skills/api-test-automation",
+      "previous_name": "api-test-automation"
+    },
+    {
+      "name": "e2e-testing-patterns",
+      "group": "quality",
+      "path": "skills/quality/e2e-testing-patterns",
+      "summary": "构建 Playwright/Cypress 端到端测试并减少不稳定失败。",
+      "tags": [
+        "E2E",
+        "Playwright",
+        "Cypress"
+      ],
+      "notes": [],
+      "previous_path": "agents/自动化测试/skills/e2e-testing-patterns",
+      "previous_name": "e2e-testing-patterns"
+    },
+    {
+      "name": "afrexai-qa-test-plan",
+      "group": "quality",
+      "path": "skills/quality/afrexai-qa-test-plan",
+      "summary": "生成测试计划、覆盖矩阵和自动化策略。",
+      "tags": [
+        "测试计划",
+        "QA"
+      ],
+      "notes": [],
+      "previous_path": "agents/自动化测试/skills/afrexai-qa-test-plan",
+      "previous_name": "afrexai-qa-test-plan"
+    },
+    {
+      "name": "diagnosing-bugs",
+      "group": "debugging",
+      "path": "skills/debugging/diagnosing-bugs",
+      "summary": "从症状、复现和证据定位根因，并按请求修复与回归。",
+      "tags": [
+        "故障诊断",
+        "根因分析"
+      ],
+      "notes": [],
+      "previous_path": "skills/diagnosing-bugs",
+      "previous_name": "diagnosing-bugs"
+    },
+    {
+      "name": "debug-pro",
+      "group": "debugging",
+      "path": "skills/debugging/debug-pro",
+      "summary": "使用七步调试协议及多语言调试命令定位问题。",
+      "tags": [
+        "调试",
+        "多语言"
+      ],
+      "notes": [],
+      "previous_path": "agents/Bug 排查/skills/debug-pro",
+      "previous_name": "debug-pro"
+    },
+    {
+      "name": "superpowers-systematic-debugging",
+      "group": "debugging",
+      "path": "skills/debugging/superpowers-systematic-debugging",
+      "summary": "按根因调查、模式分析、假设验证和修复执行调试。",
+      "tags": [
+        "调试",
+        "根因分析"
+      ],
+      "notes": [],
+      "previous_path": "agents/Bug 排查/skills/superpowers-systematic-debugging",
+      "previous_name": "superpowers-systematic-debugging"
+    },
+    {
+      "name": "bug-fixing",
+      "group": "debugging",
+      "path": "skills/debugging/bug-fixing",
+      "summary": "提供分流、复现、影响分析、修复和回归流程。",
+      "tags": [
+        "Bug修复",
+        "回归验证"
+      ],
+      "notes": [],
+      "previous_path": "agents/Bug 排查/skills/bug-fixing",
+      "previous_name": "bug-fixing-openclaw"
+    },
+    {
+      "name": "code-fix",
+      "group": "debugging",
+      "path": "skills/debugging/code-fix",
+      "summary": "诊断编译、运行时、类型、逻辑和依赖错误。",
+      "tags": [
+        "构建失败",
+        "异常排查"
+      ],
+      "notes": [],
+      "previous_path": "agents/Bug 排查/skills/code-fix",
+      "previous_name": "code-error-fixer"
+    },
+    {
+      "name": "log-analyzer",
+      "group": "debugging",
+      "path": "skills/debugging/log-analyzer",
+      "summary": "解析多格式日志、关联服务事件并分析堆栈。",
+      "tags": [
+        "日志",
+        "堆栈"
+      ],
+      "notes": [],
+      "previous_path": "agents/Bug 排查/skills/log-analyzer",
+      "previous_name": "log-analyzer"
+    },
+    {
+      "name": "nexus-error-explain",
+      "group": "debugging",
+      "path": "skills/debugging/nexus-error-explain",
+      "summary": "调用 NEXUS 第三方服务解释错误信息。",
+      "tags": [
+        "第三方服务",
+        "付费依赖"
+      ],
+      "notes": [
+        "输入会发送至 NEXUS 外部服务；需支付凭据或服务提供的测试模式，调用前确认数据与费用条件。"
+      ],
+      "previous_path": "agents/Bug 排查/skills/nexus-error-explain",
+      "previous_name": "nexus-error-explain"
+    },
+    {
+      "name": "hs-warranty-report",
+      "group": "utilities",
+      "path": "skills/utilities/hs-warranty-report",
+      "summary": "根据对话、Git 和会话证据整理售后或质保报工。",
+      "tags": [
+        "售后",
+        "报工",
+        "工作记录"
+      ],
+      "notes": [],
+      "previous_path": "skills/hs-warranty-report",
+      "previous_name": "hs-warranty-report"
+    },
+    {
+      "name": "storage-analyzer",
+      "group": "utilities",
+      "path": "skills/utilities/storage-analyzer",
+      "summary": "只读扫描磁盘占用，生成静态报告或启动交互式清理服务。",
+      "tags": [
+        "存储",
+        "Windows",
+        "macOS"
+      ],
+      "notes": [
+        "扫描只读；清理服务支持回收站及永久删除，属于独立写操作。原技能注明 Windows 未经真实环境验证。"
+      ],
+      "previous_path": "skills/storage-analyzer",
+      "previous_name": "storage-analyzer"
+    }
+  ]
+}
