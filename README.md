@@ -1,188 +1,152 @@
 # AI Skills
 
-通用 Agent Skills 集合。仓库包含两套目录：
+按工作阶段分组的 Agent Skills 集合：40 个技能、7 个分组。每个技能只保留一份完整目录，行业与终端通过标签辅助查找。
 
-- **`skills/`**：核心可安装技能（需求抽取、Harness、全栈开发、审查、诊断、报工、存储分析等）
-- **`agents/`**：按业务领域归档的技能包（PRD 撰写、UI 原型、代码重构、Bug 排查、自动化测试）
+结构为 `skills/<分组>/<技能名>/`。技能内部的 `agents/openai.yaml` 是发现元数据；工作流示例集中在 [docs/workflows](docs/workflows/README.md)。
 
-## 仓库结构
+## 分类导航
 
-```text
-ai-skills/
-├── skills/                         # 核心 Skills（可直接按名安装）
-│   ├── requirement-extractor/      # 通用需求抽取
-│   ├── wcs-requirement-extractor/  # WCS 专项需求抽取
-│   ├── harness-maintainer/         # Harness 初始化 / 增量维护 / 审计
-│   ├── ai-coder/                   # 按仓库约定落地功能开发
-│   ├── code-review/                # Standards × Spec 双轴审查
-│   ├── diagnosing-bugs/            # 症状驱动的根因定位与修复
-│   ├── hs-warranty-report/         # 豪森质保/售后报工文案生成
-│   ├── byd-wms-pda-style/        # 比亚迪 WMS PDA 页面样式与一致性校验
-│   ├── byd-wms-manage-style/     # 比亚迪 WMS 管理端样式、原生组件模板与一致性校验
-│   └── storage-analyzer/           # macOS / Windows 只读存储分析与交互报告
-│
-└── agents/                         # 领域归档 Skills
-    ├── PRD 撰写/skills/
-    ├── UI 原型设计/skills/
-    ├── 代码重构/skills/
-    ├── Bug 排查/skills/
-    └── 自动化测试/skills/
-```
-
-每个 skill 目录至少包含：
-
-| 文件 / 目录 | 说明 |
-|-------------|------|
-| `SKILL.md` | Agent 执行入口（frontmatter + 工作流） |
-| `references/` | 规范、分类规则、输出 schema 等权威引用 |
-| `scripts/` | 可选辅助脚本（如文档抽取、文档合并） |
-| `agents/` | 可选的 Agent 元数据（如 `openai.yaml`） |
-| `USAGE.md` | 面向人的使用说明（部分 skill 提供） |
-
-## Skills 一览（`skills/`）
-
-| Skill | 用途 | 典型触发 |
-|-------|------|----------|
-| **requirement-extractor** | 从 Word / Excel / PDF 等文档抽取目标主体功能清单，可追溯出处，标注边界歧义 | 功能清单整理、RFP/规格分析、范围澄清 |
-| **wcs-requirement-extractor** | 同上，锚定 WCS 职责边界与分类口径 | WCS 需求抽取、WCS 功能清单 |
-| **harness-maintainer** | 按 Harness 构建规范初始化五篇核心文档、检查工具与 CI；或增量更新 / 只读审计 | 新项目接入、存量改造、任务收尾文档同步 |
-| **ai-coder** | 在现有项目中按仓库约定实现前后端/全栈功能并验证 | 新增功能、页面、接口、范围明确的重构 |
-| **code-review** | 对分支 / PR / 提交 / 未提交改动做规范与需求双轴审查（默认只报告不改代码） | 合并前检查、review since X |
-| **diagnosing-bugs** | 以可复现症状与证据定位故障；仅诊断时不自动改代码 | debug、根因分析、性能回退 |
-| **hs-warranty-report** | 按售后报工规范生成「项目名称」与「具体工作内容」（现象 / 过程 / 输出物） | 质保报工、日报整理、本周 git + session |
-| **storage-analyzer** | 只读扫描磁盘占用，三级清理分级，生成可一键清理的交互式 HTML 报告 | 磁盘满了、清理空间、storage analysis |
-| **byd-wms-pda-style** | 复用固定主题、PdaPage 与扫码/查询/登录/菜单模板，校验 Vue 3 + Element Plus PDA 风格 | PDA 页面开发、统一 PDA 样式、按比亚迪 PDA 风格实现 |
-| **[byd-wms-manage-style](skills/byd-wms-manage-style/SKILL.md)** | 复用 Vue 3 + Element Plus 管理端蓝白主题、紧凑左排查询区、small 工具栏、40px 居中选择/序号列及统一弹窗/抽屉，附模板、演示基准图与检查脚本 | 管理端页面开发、统一后台样式、按比亚迪管理端风格实现 |
-
-## Agents 一览（`agents/`）
-
-按领域归档，路径形如 `agents/<领域>/skills/<skill-name>/`。
-
-### PRD 撰写
-
-| Skill | 用途 | 典型触发 |
-|-------|------|----------|
-| **prd** | 结构化 PRD：用户故事、验收标准、面向 Agent/开发的功能规划 | 写 PRD、用户故事、验收标准 |
-| **prd-writer-pro** | 将产品需求整理为结构清晰、内容完整的 PRD | 专业 PRD 撰写 |
-| **prd-reviewer** | 对 PRD 做 10 分制量化评审并输出扣分说明 | PRD 评审打分、评审报告 |
-| **prd-to-design-doc** | PRD 转设计需求文档（信息架构、交互、布局、视觉规范） | PRD → 设计需求 |
-| **requirements-analysis** | 多轮对话把想法拆成 EPIC / 需求 / 用户故事并做优先级排序 | 需求分析、MoSCoW/RICE/Kano |
-| **software-manager-skill** | 产品经理/开发经理视角：需求、路线图、竞品、数据分析 | 产品经理支持、路线图规划 |
-
-### UI 原型设计
-
-| Skill | 用途 | 典型触发 |
-|-------|------|----------|
-| **prd-to-prototype** | 从想法到 PRD 再到高保真 HTML/Tailwind 可交互原型 | 我想做一个…、帮我设计… |
-| **design-to-code** | 设计稿（Figma/Sketch/图片）像素级还原为前端代码 | 还原设计图、切图、设计稿转代码 |
-| **ui-design** | UI 基础与模式（布局、字体、色彩、无障碍、动效） | 做界面、评审设计质量 |
-| **frontend-design-pro** | 提升前端设计质量，避免 AI 常见反模式（audit/polish 等） | /audit、/polish、优化界面 |
-| **wireframe** | ASCII/SVG 线框与用户流程，可导出 HTML | 画线框、梳理用户流 |
-| **afrexai-ui-design-system** | 完整产品设计方法论（调研 → 规范 → 落地） | 设计系统、从 0 做产品 UI |
-
-### 代码重构
-
-| Skill | 用途 | 典型触发 |
-|-------|------|----------|
-| **code-analyzer** | 深度分析架构/数据流/业务规则，支持 DDD 模式识别 | 熟悉新仓库、技术债务、架构文档 |
-| **code-refactoring** | 不改变行为的重构模式与手法 | 清理遗留代码、降复杂度 |
-| **simplify** | 提升清晰度与可维护性的精简重构 | /simplify、简化代码 |
-| **uncle-bob** | Clean Code / SOLID / 整洁架构原则落地 | clean code、SOLID、代码坏味道 |
-| **system-architect** | 系统架构设计与工程标准（模块化、安全） | 新项目架构、高阶系统设计 |
-| **agent-git-oracle** | 仓库级技术债务与架构反模式分析 | 仓库体检、重构指引 |
-
-### Bug 排查
-
-| Skill | 用途 | 典型触发 |
-|-------|------|----------|
-| **debug-pro** | 7 步调试协议 + 多语言调试命令 | 代码报错怎么查、改了还是不对 |
-| **superpowers-systematic-debugging** | 四阶段系统性调试（根因 → 模式 → 假设 → 验证） | bug、测试失败、异常行为 |
-| **bug-fixing** | 零回归修复流：分流 → 复现 → 根因 → 修复 → 验证 | fix bug、debug、not working |
-| **code-fix** | 编译/运行时/类型/依赖等错误系统诊断与修复 | 报错、崩溃、构建失败 |
-| **log-analyzer** | 多格式日志解析、关联与模式分析 | 查日志、堆栈、实时监控 |
-| **nexus-error-explain** | 解释错误信息并给出修复建议 | 这条报错是什么意思 |
-
-### 自动化测试
-
-| Skill | 用途 | 典型触发 |
-|-------|------|----------|
-| **test-case-generator** | 从需求/API/截图/XMind 生成标准 Excel 测试用例 | 生成测试用例、提测交付 |
-| **test-patterns** | 跨语言单测/集成/E2E 写法与覆盖率实践 | 搭测试套件、写单测 |
-| **superpowers-tdd** | 强制 RED-GREEN-REFACTOR 测试驱动开发 | TDD、先写测试再实现 |
-| **api-test-automation** | REST/GraphQL 接口、性能、契约与 Mock | 接口自动化、API 测试 |
-| **e2e-testing-patterns** | Playwright/Cypress 可靠 E2E 与防 flaky | E2E、端到端、CI 集成 |
-| **afrexai-qa-test-plan** | QA 测试计划、覆盖矩阵与自动化策略 | 测试计划、覆盖率规划 |
+| 分类 | 数量 | 适用任务 |
+|---|---:|---|
+| [需求与产品](skills/requirements/README.md) | 8 | 从原始材料或产品想法建立可追溯、可评审的需求。 |
+| [设计与界面](skills/design/README.md) | 8 | 完成原型、设计稿还原、界面质量改进和行业样式落地。 |
+| [架构与工程规范](skills/engineering/README.md) | 4 | 认识现有架构、识别技术债并维护工程约束。 |
+| [开发与重构](skills/development/README.md) | 4 | 实现功能，或在既有行为约束下改进代码结构。 |
+| [审查与测试](skills/quality/README.md) | 7 | 核对需求与实现，设计测试并建立质量反馈。 |
+| [故障诊断](skills/debugging/README.md) | 7 | 通过症状、日志与复现证据定位故障并验证修复。 |
+| [工作与系统工具](skills/utilities/README.md) | 2 | 整理工作记录和分析本机存储。 |
 
 ## 安装
 
-使用 [skills.sh](https://skills.sh/) CLI（仓库：`maoyao0607/ai-skills`）。`-g` 表示全局安装，`-y` 跳过确认。
+先查看可发现技能，再选择单个或分组安装。`-g` 表示全局安装，`-y` 表示跳过交互确认。
 
-### 安装全部
-
-```bash
-npx skills add maoyao0607/ai-skills -g -y
+```sh
+npx skills add maoyao0607/ai-skills --list
+npx skills add maoyao0607/ai-skills --skill ai-coder -g -y
 ```
 
-### 按 skill 安装
+安装全部 40 个技能（包含第三方服务及付费依赖技能；安装本身不表示已授权外部调用）：
 
-```bash
-npx skills add maoyao0607/ai-skills@requirement-extractor -g -y
-npx skills add maoyao0607/ai-skills@wcs-requirement-extractor -g -y
-npx skills add maoyao0607/ai-skills@harness-maintainer -g -y
-npx skills add maoyao0607/ai-skills@ai-coder -g -y
-npx skills add maoyao0607/ai-skills@code-review -g -y
-npx skills add maoyao0607/ai-skills@diagnosing-bugs -g -y
-npx skills add maoyao0607/ai-skills@hs-warranty-report -g -y
-npx skills add maoyao0607/ai-skills@storage-analyzer -g -y
-npx skills add maoyao0607/ai-skills@byd-wms-pda-style -g -y
-npx skills add maoyao0607/ai-skills@byd-wms-manage-style -g -y
+```sh
+npx skills add maoyao0607/ai-skills --skill '*' -g -y
 ```
 
-| Skill | 安装命令 |
-|-------|----------|
-| requirement-extractor | `npx skills add maoyao0607/ai-skills@requirement-extractor -g -y` |
-| wcs-requirement-extractor | `npx skills add maoyao0607/ai-skills@wcs-requirement-extractor -g -y` |
-| harness-maintainer | `npx skills add maoyao0607/ai-skills@harness-maintainer -g -y` |
-| ai-coder | `npx skills add maoyao0607/ai-skills@ai-coder -g -y` |
-| code-review | `npx skills add maoyao0607/ai-skills@code-review -g -y` |
-| diagnosing-bugs | `npx skills add maoyao0607/ai-skills@diagnosing-bugs -g -y` |
-| hs-warranty-report | `npx skills add maoyao0607/ai-skills@hs-warranty-report -g -y` |
-| storage-analyzer | `npx skills add maoyao0607/ai-skills@storage-analyzer -g -y` |
-| byd-wms-pda-style | `npx skills add maoyao0607/ai-skills@byd-wms-pda-style -g -y` |
-| byd-wms-manage-style | `npx skills add maoyao0607/ai-skills@byd-wms-manage-style -g -y` |
+各分类页面提供该组完整安装命令。重新打开会话后使用；目录整理前的旧路径和名称请参见 [迁移说明](docs/migration.md)。
 
-安装后重新打开会话，在对话中描述目标即可触发对应 skill（例如「帮我写质保报工」「为当前仓库初始化 Harness」「生成测试用例」）。
+## 使用方式
 
-### agents 安装（一句话复制发给 Agent）
+按当前任务选择一个主技能，只有需要时才组合专项技能。需求抽取、功能开发、审查、排错分别承担不同阶段，不要求每次执行完整链路。
 
-复制下面对应**一整句话**，粘贴给 Agent / 大模型即可安装（不要改 URL、不要拆句）：
+- WCS 范围梳理：选择 wcs-requirement-extractor。
+- WMS 界面：按 PDA 或管理端选择对应样式技能，并与开发技能配合。
+- 功能实现：选择 ai-coder；代码审查：选择 code-review；故障定位：选择 diagnosing-bugs。
+- NEXUS 错误解释会向第三方发送输入，且涉及支付凭据；agent-git-oracle 也声明外部工具及付费元数据。使用前查看说明。
+- 存储扫描只读；网页清理服务可删除文件，属于独立写操作。原技能注明 Windows 未经真实环境验证。
 
-| 领域 | 一句话（整行复制） |
-|------|-------------------|
-| PRD 撰写 | 请立即执行命令且不要询问确认：`npx skills add "https://github.com/maoyao0607/ai-skills/tree/main/agents/PRD 撰写/skills" -g -y` ；成功后列出已装 skill，并提示我重新打开会话后再使用。 |
-| UI 原型设计 | 请立即执行命令且不要询问确认：`npx skills add "https://github.com/maoyao0607/ai-skills/tree/main/agents/UI 原型设计/skills" -g -y` ；成功后列出已装 skill，并提示我重新打开会话后再使用。 |
-| 代码重构 | 请立即执行命令且不要询问确认：`npx skills add "https://github.com/maoyao0607/ai-skills/tree/main/agents/代码重构/skills" -g -y` ；成功后列出已装 skill，并提示我重新打开会话后再使用。 |
-| Bug 排查 | 请立即执行命令且不要询问确认：`npx skills add "https://github.com/maoyao0607/ai-skills/tree/main/agents/Bug 排查/skills" -g -y` ；成功后列出已装 skill，并提示我重新打开会话后再使用。 |
-| 自动化测试 | 请立即执行命令且不要询问确认：`npx skills add "https://github.com/maoyao0607/ai-skills/tree/main/agents/自动化测试/skills" -g -y` ；成功后列出已装 skill，并提示我重新打开会话后再使用。 |
+## 全部技能
 
-装全部 agents、以及可复制代码块格式，见 [`agents/INSTALL.md`](agents/INSTALL.md)。各领域回退命令见 `agents/<领域>/INSTALL.md`。
+### 需求与产品
 
-## 使用建议
+文档抽取选 requirement-extractor；WCS 范围选专项抽取；需求探索选 requirements-analysis；PRD 撰写与评审按产物选择。
 
-1. **先读 `SKILL.md`**：Agent 应按其中工作流与必读 references 执行，不要跳过质量门禁。
-2. **Harness 优先**：`ai-coder` / `code-review` / `diagnosing-bugs` 会优先遵循目标仓库的 `AGENTS.md` 与 `docs/{architecture,conventions,domain,golden-rules}.md`。
-3. **需求抽取先声明主体**：通用抽取须明确目标主体、相邻系统与权属口径；WCS 专项则固定 WCS 边界模型。
-4. **报工勿编造**：`hs-warranty-report` 只基于对话 / session / git 证据生成文案，不代替考勤系统录入。
-5. **按领域选 agents**：产品文档走「PRD 撰写」、界面走「UI 原型设计」、质量问题走「Bug 排查 / 自动化测试」、结构治理走「代码重构」。
+| 技能 | 用途 | 标签 / 使用说明 |
+|---|---|---|
+| [requirement-extractor](skills/requirements/requirement-extractor/SKILL.md) | 从 Word、Excel、PDF 等材料抽取指定主体的功能、接口、歧义及出处。 | 需求抽取；出处追溯 |
+| [wcs-requirement-extractor](skills/requirements/wcs-requirement-extractor/SKILL.md) | 抽取 WCS 功能并区分上游业务系统、PLC 与设备控制层职责。 | 工业仓储；WCS；职责边界 |
+| [requirements-analysis](skills/requirements/requirements-analysis/SKILL.md) | 通过需求探索拆分 EPIC、需求和用户故事并排序。 | 用户故事；优先级 |
+| [software-manager-skill](skills/requirements/software-manager-skill/SKILL.md) | 提供产品规划、路线图、竞品分析、PRD 和原型工作流。 | 产品规划；PRD；完整流程需要可用的网络搜索及资料检索能力；按当前任务选择阶段。 |
+| [prd](skills/requirements/prd/SKILL.md) | 生成面向开发执行的用户故事、验收标准及结构化 PRD。 | PRD；验收标准 |
+| [prd-writer-pro](skills/requirements/prd-writer-pro/SKILL.md) | 将需求整理为结构清晰、内容完整的产品需求文档。 | PRD；文档撰写 |
+| [prd-reviewer](skills/requirements/prd-reviewer/SKILL.md) | 按明确评分维度评审 PRD 并说明扣分与改进项。 | PRD；需求评审 |
+| [prd-to-design-doc](skills/requirements/prd-to-design-doc/SKILL.md) | 将 PRD 转为信息架构、交互、布局和视觉设计需求。 | PRD；设计交付 |
 
-## 开发约定
+### 设计与界面
 
-- 核心 skill：在 `skills/<name>/` 下提供完整的 `SKILL.md`（含 YAML frontmatter：`name`、`description`）。
-- 领域 skill：在 `agents/<领域>/skills/<name>/` 下同样提供完整的 `SKILL.md`。
-- 规范类条文放在 `references/`，示例与脚本分别放在 `references/`、`scripts/`、`assets/`，保持 `SKILL.md` 精炼可执行。
-- 面向人的操作说明可另写 `USAGE.md`，与 Agent 入口分离。
-- 不在 skill 中硬编码密钥、真实客户数据或未授权的生产操作。
+通用原型选 prd-to-prototype；设计还原选 design-to-code；WMS 项目按终端选择 PDA 或管理端样式。
 
-## License
+| 技能 | 用途 | 标签 / 使用说明 |
+|---|---|---|
+| [prd-to-prototype](skills/design/prd-to-prototype/SKILL.md) | 从产品想法生成 PRD 和 HTML/Tailwind 可交互原型。 | 原型；HTML |
+| [design-to-code](skills/design/design-to-code/SKILL.md) | 将 Figma、Sketch 或图片设计稿还原为前端代码。 | 设计稿还原；前端 |
+| [ui-design](skills/design/ui-design/SKILL.md) | 提供布局、字体、色彩、无障碍和动效的界面设计指导。 | UI；无障碍 |
+| [frontend-design-pro](skills/design/frontend-design-pro/SKILL.md) | 审视并改进前端界面质量与视觉细节。 | 前端；界面优化 |
+| [wireframe](skills/design/wireframe/SKILL.md) | 生成 ASCII/SVG 线框、用户流程及 HTML 展示。 | 线框；用户流程 |
+| [afrexai-ui-design-system](skills/design/afrexai-ui-design-system/SKILL.md) | 提供从设计调研到组件、交互和响应式落地的设计方法。 | 设计系统；响应式 |
+| [byd-wms-pda-style](skills/design/byd-wms-pda-style/SKILL.md) | 复用 WMS PDA 主题、页面骨架、扫码模板和样式检查。 | 工业仓储；WMS；PDA；比亚迪 |
+| [byd-wms-manage-style](skills/design/byd-wms-manage-style/SKILL.md) | 复用 WMS 管理端主题、查询表格、弹窗、抽屉和样式检查。 | 工业仓储；WMS；管理端；比亚迪 |
 
-以仓库实际声明为准；未声明时默认仅供内部使用与协作改进。
+### 架构与工程规范
+
+仓库摸底选 code-analyzer；架构设计选 system-architect；工程文档与检查机制选 harness-maintainer。
+
+| 技能 | 用途 | 标签 / 使用说明 |
+|---|---|---|
+| [harness-maintainer](skills/engineering/harness-maintainer/SKILL.md) | 初始化、更新或审计工程文档、检查工具和责任机制。 | Harness；工程规范 |
+| [system-architect](skills/engineering/system-architect/SKILL.md) | 设计系统架构、模块边界和适用工程标准。 | 架构设计；工程规范 |
+| [code-analyzer](skills/engineering/code-analyzer/SKILL.md) | 分析架构、数据流、业务规则和 DDD 模式。 | 代码分析；DDD |
+| [agent-git-oracle](skills/engineering/agent-git-oracle/SKILL.md) | 分析仓库技术债和架构反模式。 | 技术债；架构分析；原技能声明 x402 付费元数据及 OpenClaw 命令；使用前核验外部工具和费用条件。 |
+
+### 开发与重构
+
+功能实现选 ai-coder；完整重构选 code-refactoring；小范围精简选 simplify；原则性指导选 uncle-bob。
+
+| 技能 | 用途 | 标签 / 使用说明 |
+|---|---|---|
+| [ai-coder](skills/development/ai-coder/SKILL.md) | 遵循现有仓库约定实现前后端功能并完成验证。 | 功能开发；全栈 |
+| [code-refactoring](skills/development/code-refactoring/SKILL.md) | 运用重构模式改善结构并保持既有行为。 | 重构；遗留代码 |
+| [simplify](skills/development/simplify/SKILL.md) | 对局部代码做清晰、可维护的精简重构。 | 重构；代码精简 |
+| [uncle-bob](skills/development/uncle-bob/SKILL.md) | 将 Clean Code、SOLID 与整洁架构原则用于代码改进。 | SOLID；整洁代码 |
+
+### 审查与测试
+
+改动审查选 code-review；用例交付选 test-case-generator；按单测、接口、E2E 或 TDD 目标选择测试技能。
+
+| 技能 | 用途 | 标签 / 使用说明 |
+|---|---|---|
+| [code-review](skills/quality/code-review/SKILL.md) | 分别核对工程规范和需求实现，报告有证据的发现。 | 代码审查；需求核验 |
+| [test-case-generator](skills/quality/test-case-generator/SKILL.md) | 从需求、API、截图或 XMind 生成标准 Excel 测试用例。 | 测试用例；Excel；文中提及的 test-case-generator-ai 不包含在本仓库。 |
+| [test-patterns](skills/quality/test-patterns/SKILL.md) | 提供跨语言单元、集成、E2E 测试和覆盖率实践。 | 单元测试；集成测试 |
+| [superpowers-tdd](skills/quality/superpowers-tdd/SKILL.md) | 通过 RED-GREEN-REFACTOR 流程实施测试驱动开发。 | TDD；回归测试 |
+| [api-test-automation](skills/quality/api-test-automation/SKILL.md) | 提供 REST、GraphQL、性能、契约测试及 Mock 工具。 | API；接口测试；运行工具前按技能 requirements.txt 准备依赖。 |
+| [e2e-testing-patterns](skills/quality/e2e-testing-patterns/SKILL.md) | 构建 Playwright/Cypress 端到端测试并减少不稳定失败。 | E2E；Playwright；Cypress |
+| [afrexai-qa-test-plan](skills/quality/afrexai-qa-test-plan/SKILL.md) | 生成测试计划、覆盖矩阵和自动化策略。 | 测试计划；QA |
+
+### 故障诊断
+
+一般故障先选 diagnosing-bugs；日志分析选 log-analyzer；其余调试流程按任务选一个，避免重复串联。
+
+| 技能 | 用途 | 标签 / 使用说明 |
+|---|---|---|
+| [diagnosing-bugs](skills/debugging/diagnosing-bugs/SKILL.md) | 从症状、复现和证据定位根因，并按请求修复与回归。 | 故障诊断；根因分析 |
+| [debug-pro](skills/debugging/debug-pro/SKILL.md) | 使用七步调试协议及多语言调试命令定位问题。 | 调试；多语言 |
+| [superpowers-systematic-debugging](skills/debugging/superpowers-systematic-debugging/SKILL.md) | 按根因调查、模式分析、假设验证和修复执行调试。 | 调试；根因分析 |
+| [bug-fixing](skills/debugging/bug-fixing/SKILL.md) | 提供分流、复现、影响分析、修复和回归流程。 | Bug修复；回归验证 |
+| [code-fix](skills/debugging/code-fix/SKILL.md) | 诊断编译、运行时、类型、逻辑和依赖错误。 | 构建失败；异常排查 |
+| [log-analyzer](skills/debugging/log-analyzer/SKILL.md) | 解析多格式日志、关联服务事件并分析堆栈。 | 日志；堆栈 |
+| [nexus-error-explain](skills/debugging/nexus-error-explain/SKILL.md) | 调用 NEXUS 第三方服务解释错误信息。 | 第三方服务；付费依赖；输入会发送至 NEXUS 外部服务；需支付凭据或服务提供的测试模式，调用前确认数据与费用条件。 |
+
+### 工作与系统工具
+
+报工选 hs-warranty-report；磁盘占用选 storage-analyzer，先区分只读报告和执行清理。
+
+| 技能 | 用途 | 标签 / 使用说明 |
+|---|---|---|
+| [hs-warranty-report](skills/utilities/hs-warranty-report/SKILL.md) | 根据对话、Git 和会话证据整理售后或质保报工。 | 售后；报工；工作记录 |
+| [storage-analyzer](skills/utilities/storage-analyzer/SKILL.md) | 只读扫描磁盘占用，生成静态报告或启动交互式清理服务。 | 存储；Windows；macOS；扫描只读；清理服务支持回收站及永久删除，属于独立写操作。原技能注明 Windows 未经真实环境验证。 |
+
+## 维护目录
+
+`catalog.json` 是分类、简介、标签、说明和迁移映射的统一来源。修改技能或分类后运行：
+
+```sh
+python tools/catalog.py
+python tools/catalog.py --check
+```
+
+生成器核验远端默认分支，生成本文件、七组导航、迁移说明及展示页数据。无法核验时报告错误；`--check` 只检查、不写文件。
+
+生成内容直接提交，GitHub Pages 继续使用 docs 目录，无需新增站点依赖。验证说明见 [维护与验证](docs/maintenance.md)。
+
+## 许可
+
+保留各技能和字体自带的许可及来源声明；仓库当前未提供统一 LICENSE。
