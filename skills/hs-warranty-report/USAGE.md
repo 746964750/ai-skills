@@ -3,13 +3,13 @@
 面向人的操作手册。Agent 执行细节见同目录 [`SKILL.md`](SKILL.md)。
 
 **作者**：@Cong  
-**用途**：按豪森售后/质保报工填写要求，生成可直接粘贴的报工文案。
+**用途**：按豪森售后报工填写要求，生成可直接粘贴的报工文案。
 
 ---
 
 ## 1. 做什么
 
-根据**当前对话**，或**当前周全部 git 提交 + Agent 对话记录**，生成报工两项核心字段：
+默认按**当前项目 + 当前一周**范围（**当前周全部 git 提交 + Agent 对话记录**），也可按**当前对话**，生成报工两项核心字段：
 
 1. **项目名称** — 与备案一致的完整标准名称  
 2. **具体工作内容** — 须含 **问题现象、处理过程、输出物**；纯文本 `1、` 序号；**每条默认 ≤30 字**（说不清可略放宽）；不要用 Markdown `1.`，不要写「已提交」、不要罗列文件  
@@ -23,16 +23,20 @@
 安装到本机全局：
 
 ```powershell
-Copy-Item -Recurse -Force .\skills\hs-warranty-report $env:USERPROFILE\.cursor\skills\hs-warranty-report
+Copy-Item -Recurse -Force .\skills\hs-warranty-report $env:USERPROFILE\.cursor\skills\
 ```
 
 全局路径：`%USERPROFILE%\.cursor\skills\hs-warranty-report\`
+
+> 目标写**父目录** `...\.cursor\skills\`（首次安装会新建，已安装会就地覆盖）。
+> 不要写成 `...\skills\hs-warranty-report`：该目录已存在时 PowerShell 会**嵌套**成
+> `hs-warranty-report\hs-warranty-report\`，旧文件原地残留、更新不生效。
 
 ## 3. 何时用
 
 在业务项目仓库中打开 Cursor，需要：
 
-- 写质保 / 售后报工描述  
+- 写售后报工描述  
 - **日报 / 周报整理**：把本周提交与智能体干活记录整理成合规报工  
 - 固定本仓库对应的备案项目名称，避免每次手填  
 
@@ -41,18 +45,18 @@ Copy-Item -Recurse -Force .\skills\hs-warranty-report $env:USERPROFILE\.cursor\s
 | 方式 | 示例 |
 |------|------|
 | Slash 命令 | `/hs-warranty-report` |
-| 当前上下文报工 | 「根据当前对话写质保报工」「帮我生成售后报工」 |
-| 当前周整理 | 「日报整理」「整理本周报工」「根据这周 git 和智能体会话写具体工作内容」 |
+| 默认（当前项目 + 当前一周） | 「帮我写报工」「整理本周报工」「日报整理」 |
+| 当前上下文报工 | 「根据当前对话写售后报工」「不用查提交」 |
 | 绑定项目名 | 「当前项目是 XX 集团 ERP 系统建设项目」再报工 |
 
 ### 两种模式
 
 | 模式 | 何时用 | 证据从哪来 |
 |------|--------|------------|
-| **A · 当前上下文**（默认） | 刚做完一轮售后处理 | 本轮对话、打开的文件、相关 git 变更 |
-| **B · 当前周整理** | 日报 / 周报 / 批量补报工 | **本周一 00:00 → 现在**：① 工作区最多 3 层内各 git 仓全部提交（找到 `.git` 即不再深入该目录）；② 本项目全部 Agent 对话 |
+| **B · 当前项目当前周**（默认） | 未特别说明时；日报 / 周报 / 批量补报工 | **本周一 00:00 → 现在**：① 工作区最多 3 层内各 git 仓全部提交（找到 `.git` 即不再深入该目录）；② 本项目全部 Agent 对话 |
+| **A · 当前上下文** | 刚做完一轮售后处理，明确说「按当前对话写」 | 本轮对话、打开的文件、相关 git 变更 |
 
-可要求「按天拆成多条」或「合并成一条」。
+未指定时按 **B** 走（范围＝当前项目，时间＝当前一周），不再默认只看当前对话。可要求「按天拆成多条」或「合并成一条」。
 
 ## 5. 输出长什么样
 
@@ -63,7 +67,7 @@ Copy-Item -Recurse -Force .\skills\hs-warranty-report $env:USERPROFILE\.cursor\s
 1、计划模块统计报错，升脚本至 V2.3 后验证通过。
 ```
 
-复制到工时系统即可。不要带「## 质保报工」之类标题。项目名未知时会出现：`【待补：项目标准名称】`，需人工按备案补齐。多事项写成 `1、` `2、` `3、` …，每条尽量 ≤30 字。
+复制到工时系统即可。不要带「## 售后报工」之类标题。项目名未知时会出现：`【待补：项目标准名称】`，需人工按备案补齐。多事项写成 `1、` `2、` `3、` …，每条尽量 ≤30 字。
 
 ## 6. 项目名称记忆（推荐）
 
@@ -90,15 +94,28 @@ Agent **不会**在未声明时猜测写入。
 
 ## 8. 使用注意
 
-- 模式 B 必须同时看 **当前周 git**（根 + 最多 3 层子目录内各独立仓库）与 **Agent 对话**；缺一端应标注，不能只凭另一端编造。  
+- **默认模式＝当前项目 + 当前一周**（模式 B）；必须同时看 **当前周 git**（工作区根 + 最多 3 层子目录内各独立仓库）与 **Agent 对话**；缺一端应标注，不能只凭另一端编造。  
+- 只有明确说「按当前对话写」「不用查提交」时才走模式 A（不套时间窗）。  
 - 没有实质工作时 Agent 应拒绝编造，并列出需你补充的三要素。  
 - 多事项默认合并为**一条报工**内的 `1、` `2、` 序号行；要按天分块时请明确说「按天拆分」或「多条报工」。  
 - 规范原文：`references/filling-spec.md`。
 
 ## 9. 更新 Skill
 
+源码改动后重新同步（与 §2 同一条命令，可就地覆盖已安装版本）：
+
 ```powershell
-Copy-Item -Recurse -Force .\skills\hs-warranty-report $env:USERPROFILE\.cursor\skills\hs-warranty-report
+Copy-Item -Recurse -Force .\skills\hs-warranty-report $env:USERPROFILE\.cursor\skills\
 ```
+
+要完全对齐（顺带清掉已删文件）时改用先删后拷：
+
+```powershell
+$dst = "$env:USERPROFILE\.cursor\skills\hs-warranty-report"
+Remove-Item -Recurse -Force $dst -ErrorAction SilentlyContinue
+Copy-Item -Recurse -Force .\skills\hs-warranty-report $dst
+```
+
+> 注意：第二种写法会一并删除该目录下的 `.canonical-bundle-hash`（安装器留下的内容指纹）。
 
 <!-- hs-warranty-report · author @Cong -->
